@@ -2,6 +2,7 @@
 name = "dev-shell"
 version = "0.0.1alpha0"
 description = "Devloper shell for easy startup..."
+readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
 license = "GNU General Public License v3.0"
 packages = [
