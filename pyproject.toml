@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "dev-shell"
+version = "0.0.1alpha0"
+description = "Devloper shell for easy startup..."
+authors = ["Jens Diemer <python@jensdiemer.de>"]
+license = "GNU General Public License v3.0"
+packages = [
+    { include = "dev_shell" },
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7,<4.0.0"
+
+[tool.poetry.dev-dependencies]
+poetry-publish = "*"  # https://github.com/jedie/poetry-publish
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
