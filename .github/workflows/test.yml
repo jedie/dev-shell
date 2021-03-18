@@ -25,7 +25,7 @@ jobs:
 
     - name: 'List installed packages'
       run: |
-        ./venv/bin/poetry run pip freeze
+        ./.venv/bin/poetry run pip freeze
 
     - name: 'Run tests with Python v${{ matrix.python-version }}'
       run: |
