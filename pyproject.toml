@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.0.1alpha0"
+version = "0.0.1"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
@@ -10,7 +10,7 @@ packages = [
 ]
 
 [tool.poetry.scripts]
-devshell = 'dev_shell.cmd2app:devshell_cmdloop'
+devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
 [tool.poetry.dependencies]
 python = ">=3.7,<4.0.0"
@@ -25,6 +25,8 @@ poetry-publish = "*"  # https://github.com/jedie/poetry-publish
 isort = "*"
 cmd2_ext_test = "*"
 flake8 = "*"
+flynt = "*"
+autopep8 = "*"
 pytest = "*"
 pytest-randomly = "*"
 pytest-cov = "*"
