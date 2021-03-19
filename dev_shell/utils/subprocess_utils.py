@@ -1,7 +1,9 @@
 import os
 import re
 import shlex
+import shutil
 import subprocess
+from pathlib import Path
 
 from dev_shell.utils.colorful import blue_bold, yellow_bold
 
@@ -27,6 +29,19 @@ def _print_info(popenargs, kwargs):
     print(f'{msg}\n', flush=True)
 
 
+def prepare_popenargs(popenargs):
+    popenargs = [str(part) for part in popenargs]  # e.g.: Path() instance -> str
+
+    command = Path(popenargs[0])
+    if not command.is_file():
+        command = shutil.which(command)
+        if not command:
+            raise FileNotFoundError(f'Command "{popenargs[0]}" not found in PATH!')
+        popenargs[0] = str(command)
+
+    return popenargs
+
+
 def verbose_check_call(
         *popenargs,
         verbose=True,
@@ -35,7 +50,7 @@ def verbose_check_call(
         **kwargs):
     """ 'verbose' version of subprocess.check_call() """
 
-    popenargs = [str(part) for part in popenargs]  # e.g.: Path() instance -> str
+    popenargs = prepare_popenargs(popenargs)
 
     if verbose:
         _print_info(popenargs, kwargs)
@@ -56,7 +71,7 @@ def verbose_check_call(
 def verbose_check_output(*popenargs, verbose=True, cwd=None, extra_env=None, **kwargs):
     """ 'verbose' version of subprocess.check_output() """
 
-    popenargs = [str(part) for part in popenargs]  # e.g.: Path() instance -> str
+    popenargs = prepare_popenargs(popenargs)
 
     if verbose:
         _print_info(popenargs, kwargs)

@@ -2,7 +2,6 @@ import subprocess
 from unittest.mock import patch
 
 from cmd2 import CommandResult
-from poetry_publish import publish
 
 from dev_shell.tests.fixtures import DevShellAppBaseTestCase
 

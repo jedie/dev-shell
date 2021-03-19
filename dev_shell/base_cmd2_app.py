@@ -3,44 +3,16 @@ import sys
 from pathlib import Path
 
 import cmd2 as cmd2
-import dev_shell
-from cmd2 import fg
-from dev_shell.command_sets.publish import PublishCommandSet
-from dev_shell.command_sets.tests import TestCommandSet
+
 from dev_shell.config import DevShellConfig
 from dev_shell.utils.colorful import blue_bold, yellow_bold
 from dev_shell.utils.subprocess_utils import argv2str
 
-PROJECT_PATH = Path(__file__).parent.parent
-
-
-def get_app_kwargs(config: DevShellConfig) -> dict:
-    """
-    Generate the kwargs for the cmd2 App.
-    (Separated because we needs the same kwargs in tests)
-    """
-
-    # initialize all CommandSet() with context:
-    kwargs = dict(
-        config=config
-    )
-
-    app_kwargs = dict(
-        config=config,
-        command_sets=[
-            TestCommandSet(**kwargs),
-            PublishCommandSet(**kwargs),
-        ]
-    )
-    return app_kwargs
-
-
-def get_devshell_app_kwargs():
-    config = DevShellConfig(package_module=dev_shell)
-    return get_app_kwargs(config)
-
 
 class DevShellBaseApp(cmd2.Cmd):
+    """
+    Base cmd2 App with some gimmicks ;)
+    """
 
     def __init__(self, *args, config: DevShellConfig, **kwargs):
         kwargs.update(dict(
@@ -63,7 +35,6 @@ class DevShellBaseApp(cmd2.Cmd):
             self.intro = None
             command = argv2str(args)
             self._startup_commands = [command]
-            print('\nExecute command:', cmd2.ansi.style(command, fg=fg.bright_cyan, bold=True))
         else:
             self._startup_commands = ['help']
 
@@ -89,19 +60,10 @@ class DevShellBaseApp(cmd2.Cmd):
         return stop
 
     def update_path(self):
+        """
+        Add our .venv/bin/ directory into PATH at first position.
+        """
         bin_path = str(Path(sys.executable).parent.absolute())
         env_path = os.environ.get('PATH', '')
-        if env_path.startswith(bin_path):
-            return
-
-        env_path = bin_path + os.pathsep + env_path
-        os.environ['PATH'] = env_path
-
-
-class DevShellApp(DevShellBaseApp):
-    pass
-
-
-def devshell_cmdloop():
-    c = DevShellApp(**get_devshell_app_kwargs())
-    sys.exit(c.cmdloop())
+        if not env_path.startswith(bin_path):
+            os.environ['PATH'] = bin_path + os.pathsep + env_path

@@ -7,6 +7,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "astor"
+version = "0.8.1"
+description = "Read/rewrite/write Python ASTs"
+category = "dev"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+
+[[package]]
 name = "atomicwrites"
 version = "1.4.0"
 description = "Atomic file writes."
@@ -27,6 +35,18 @@ dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", 
 docs = ["furo", "sphinx", "zope.interface"]
 tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
+
+[[package]]
+name = "autopep8"
+version = "1.5.6"
+description = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+pycodestyle = ">=2.7.0"
+toml = "*"
 
 [[package]]
 name = "bleach"
@@ -181,6 +201,17 @@ pycodestyle = ">=2.7.0,<2.8.0"
 pyflakes = ">=2.3.0,<2.4.0"
 
 [[package]]
+name = "flynt"
+version = "0.60"
+description = "CLI tool to convert a python project's %-formatted strings to f-strings."
+category = "dev"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+astor = "*"
+
+[[package]]
 name = "gnureadline"
 version = "8.0.0"
 description = "The standard Python readline extension statically linked against the GNU readline library."
@@ -308,7 +339,7 @@ dev = ["pre-commit", "tox"]
 
 [[package]]
 name = "poetry-publish"
-version = "0.4.0"
+version = "0.4.1"
 description = "Helper to build and upload a project that used poetry to PyPi, with prechecks"
 category = "dev"
 optional = false
@@ -669,12 +700,16 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pyt
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7,<4.0.0"
-content-hash = "f043bfd984bf4d9d52ad7e531eef0fc9e19cb5362ef1eb38d37eeff3c759fe67"
+content-hash = "5034dd6254655d4975c451ceaf176510a7dae5bafbf457622562cda94db71df7"
 
 [metadata.files]
 appdirs = [
     {file = "appdirs-1.4.4-py2.py3-none-any.whl", hash = "sha256:a841dacd6b99318a741b166adb07e19ee71a274450e68237b4650ca1055ab128"},
     {file = "appdirs-1.4.4.tar.gz", hash = "sha256:7d5d0167b2b1ba821647616af46a749d1c653740dd0d2415100fe26e27afdf41"},
+]
+astor = [
+    {file = "astor-0.8.1-py2.py3-none-any.whl", hash = "sha256:070a54e890cefb5b3739d19f30f5a5ec840ffc9c50ffa7d23cc9fc1a38ebbfc5"},
+    {file = "astor-0.8.1.tar.gz", hash = "sha256:6a6effda93f4e1ce9f618779b2dd1d9d84f1e32812c23a29b3fff6fd7f63fa5e"},
 ]
 atomicwrites = [
     {file = "atomicwrites-1.4.0-py2.py3-none-any.whl", hash = "sha256:6d1784dea7c0c8d4a5172b6c620f40b6e4cbfdf96d783691f2e1302a7b88e197"},
@@ -683,6 +718,10 @@ atomicwrites = [
 attrs = [
     {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
+]
+autopep8 = [
+    {file = "autopep8-1.5.6-py2.py3-none-any.whl", hash = "sha256:f01b06a6808bc31698db907761e5890eb2295e287af53f6693b39ce55454034a"},
+    {file = "autopep8-1.5.6.tar.gz", hash = "sha256:5454e6e9a3d02aae38f866eec0d9a7de4ab9f93c10a273fb0340f3d6d09f7514"},
 ]
 bleach = [
     {file = "bleach-3.3.0-py2.py3-none-any.whl", hash = "sha256:6123ddc1052673e52bab52cdc955bcb57a015264a1c57d37bea2f6b817af0125"},
@@ -826,6 +865,10 @@ flake8 = [
     {file = "flake8-3.9.0-py2.py3-none-any.whl", hash = "sha256:12d05ab02614b6aee8df7c36b97d1a3b2372761222b19b58621355e82acddcff"},
     {file = "flake8-3.9.0.tar.gz", hash = "sha256:78873e372b12b093da7b5e5ed302e8ad9e988b38b063b61ad937f26ca58fc5f0"},
 ]
+flynt = [
+    {file = "flynt-0.60-py3-none-any.whl", hash = "sha256:2993c08ae355d797bd0b0ba798425de1e09436d7ff39c289e7f30e3f0e7715db"},
+    {file = "flynt-0.60.tar.gz", hash = "sha256:e3fb84495682e8cd4bea1b0db331d96286eee2f886d82e0e2609751a68cb2fc6"},
+]
 gnureadline = [
     {file = "gnureadline-8.0.0-cp26-cp26m-macosx_10_6_intel.whl", hash = "sha256:59369b0eb7210bdb2acf2940c15a6a9d35c70cde9b6d6c5b5c14b0bfd4fd258a"},
     {file = "gnureadline-8.0.0-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:8c244130b6e31669f76213ddb249c8673b8573214e80829667f17e18abe27487"},
@@ -881,8 +924,8 @@ pluggy = [
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
 ]
 poetry-publish = [
-    {file = "poetry-publish-0.4.0.tar.gz", hash = "sha256:9936ac587d9b94fa735ef53226f5f21242c8ecb0321195cc3c5cc55d4fda4bae"},
-    {file = "poetry_publish-0.4.0-py3-none-any.whl", hash = "sha256:de449fe0ff24f753e2d62e7dc7812b328b32df6fd3f3e6e84ec3d8cf352239f5"},
+    {file = "poetry-publish-0.4.1.tar.gz", hash = "sha256:24b4c14ae910b52539d23a9103f3f9b052559141fd90ad921b4be8e1a36080d5"},
+    {file = "poetry_publish-0.4.1-py3-none-any.whl", hash = "sha256:c7825a45549f2cd75c93bc997b2256f80d3cb6732f1c0a0b54be50bc15ec0dfc"},
 ]
 py = [
     {file = "py-1.10.0-py2.py3-none-any.whl", hash = "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"},
