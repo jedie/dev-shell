@@ -93,6 +93,13 @@ Or just delete `/.venv/` and start `dev-shell.py` ;)
 
 See also github test configuration: [.github/workflows/test.yml](https://github.com/jedie/dev-shell/blob/main/.github/workflows/test.yml)
 
+## History
+
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.0.1...master)
+  * TBC
+* [v0.0.1 - 2021-03-19](https://github.com/jedie/poetry-publish/compare/ad5dca...v0.0.1)
+  * first "useable" version
+
 ## Project links
 
 * Github: https://github.com/jedie/dev-shell/
