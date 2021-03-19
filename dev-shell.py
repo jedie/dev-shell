@@ -8,12 +8,12 @@
 """
 
 import argparse
-import os
 import signal
 import subprocess
 import sys
 import venv
 from pathlib import Path
+
 
 try:
     import ensurepip  # noqa
@@ -23,18 +23,22 @@ except ImportError as err:
     print('Hint: "apt-get install python3-venv"')
     raise
 
+if sys.platform == 'win32':
+    BIN_NAME = 'Scripts'  # wtf
+else:
+    BIN_NAME = 'bin'
+
 VENV_PATH = Path('.venv')
-BIN_PATH = VENV_PATH / 'bin'
+BIN_PATH = VENV_PATH / BIN_NAME
 PYTHON_PATH = BIN_PATH / 'python3'
 PIP_PATH = BIN_PATH / 'pip'
 POETRY_PATH = BIN_PATH / 'poetry'
 
-# file defined in pyproject.toml as [tool.poetry.scripts]
+# script file defined in pyproject.toml as [tool.poetry.scripts]
 PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
 
 
 assert sys.version_info >= (3, 7), 'Python version is too old!'
-assert sys.platform != 'win32', 'Windows not supported, yet!'
 
 
 def noop_signal_handler(signal_num, frame):
@@ -72,7 +76,9 @@ if __name__ == '__main__':
 
     if not POETRY_PATH.is_file() or force_update:
         # install/update "pip" and "poetry"
-        subprocess.check_call([PIP_PATH, 'install', '-U', 'pip'])
+        if sys.platform != 'win32':
+            # Under Windows pip can't replace himself -> "Access is denied" on "pip.exe" ;)
+            subprocess.check_call([PIP_PATH, 'install', '-U', 'pip'])
         subprocess.check_call([PIP_PATH, 'install', 'poetry'])
 
     # install / update via poetry

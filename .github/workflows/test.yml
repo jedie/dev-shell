@@ -1,4 +1,4 @@
-name: pytest
+name: Test
 
 on:
   schedule:
@@ -7,11 +7,13 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    name: 'Test on ${{ matrix.os }} and Python ${{ matrix.python-version }}'
+    runs-on: ${{ matrix.os }}
     strategy:
       max-parallel: 2
       matrix:
         python-version: [3.9, 3.8, 3.7]
+        os: [ubuntu-latest, macOS-latest] # TODO: Add "windows-latest"
     steps:
     - uses: actions/checkout@v1
     - name: 'Set up Python ${{ matrix.python-version }}'
@@ -21,19 +23,21 @@ jobs:
 
     - name: 'Bootstrap'
       run: |
-        ./dev-shell.py quit
+        python3 dev-shell.py quit
 
     - name: 'List installed packages'
       run: |
-        ./.venv/bin/poetry run pip freeze
+        python3 dev-shell.py list_venv_packages
 
     - name: 'Run tests with Python v${{ matrix.python-version }}'
       run: |
-        ./dev-shell.py pytest
+        python3 dev-shell.py pytest
 
-    - name: 'Upload coverage report'
-      run: bash <(curl -s https://codecov.io/bash)
-
+# TODO:
+#    - name: 'Upload coverage report'
+#      run: bash <(curl -s https://codecov.io/bash)
+#
+# TODO:
 #    - name: 'Run linters'
 #      if: matrix.python-version == '3.8'
 #      run: |
