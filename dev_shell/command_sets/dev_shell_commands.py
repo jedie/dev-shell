@@ -13,7 +13,7 @@ def run_linters():
     """
     verbose_check_call('flake8')
     verbose_check_call('isort', '--check-only', '.')
-    verbose_check_call('flynt', '--fail-on-change')
+    verbose_check_call('flynt', '--fail-on-change', '--line_length=119', 'dev_shell')
 
 
 @cmd2.with_default_category('dev-shell commands')
@@ -34,7 +34,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Fix code style by running: flynt, autopep8 and isort
         """
-        verbose_check_call('flynt', '--fail-on-change', '--line_length=119', 'dev_shell')
+        verbose_check_call('flynt', '--line_length=119', 'dev_shell')
         verbose_check_call(
             'autopep8', '--aggressive', '--aggressive', '--in-place', '--recursive', 'dev_shell'
         )
