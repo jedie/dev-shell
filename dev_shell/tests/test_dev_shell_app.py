@@ -31,4 +31,5 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
         assert command.endswith('/.venv/bin/pytest')
 
         # The call will be printed:
-        assert '.venv/bin/pytest' in stdout
+        assert '.venv/bin/' in stdout
+        assert 'pytest' in stdout
