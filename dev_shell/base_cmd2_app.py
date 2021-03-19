@@ -48,15 +48,24 @@ class DevShellBaseApp(cmd2.Cmd):
 
         self.update_path()
 
-    def onecmd_plus_hooks(self, *args, **kwargs):
+    def onecmd(self, *args, **kwargs):
         """
-        Exit cmdloop if shell was used as CLI ;)
+        1. Exit cmdloop if shell was used as CLI ;)
+        2. Pass sys.exit() code
         """
-        stop = super().onecmd_plus_hooks(*args, **kwargs)
+        try:
+            stop = super().onecmd(*args, **kwargs)
+        except SystemExit as exit_code:
+            # Pass the sys.exit() code
+            # See also: https://github.com/python-cmd2/cmd2/pull/1076
+            self.exit_code = exit_code
+            stop = False
+
         if len(sys.argv) > 1:
             # cli usage => exit cmd loop
             stop = True
             print()
+
         return stop
 
     def update_path(self):

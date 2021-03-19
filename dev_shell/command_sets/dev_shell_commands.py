@@ -15,9 +15,16 @@ def run_linters():
         'flake8',
         '--exclude=.git,__pycache__,.tox,.venv',
         '--max-line-length=119',
+        exit_on_error=True
     )
-    verbose_check_call('isort', '--check-only', '.')
-    verbose_check_call('flynt', '--fail-on-change', '--line_length=119', 'dev_shell')
+    verbose_check_call(
+        'isort', '--check-only', '.',
+        exit_on_error=True
+    )
+    verbose_check_call(
+        'flynt', '--fail-on-change', '--line_length=119', 'dev_shell',
+        exit_on_error=True
+    )
 
 
 @cmd2.with_default_category('dev-shell commands')
@@ -26,7 +33,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Run dev-shell tests via pytest
         """
-        verbose_check_call('pytest', *statement.arg_list)
+        verbose_check_call('pytest', *statement.arg_list, exit_on_error=True)
 
     def do_linting(self, statement: cmd2.Statement):
         """
@@ -56,7 +63,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         Publish "dev-shell" to PyPi
         """
         # Don't publish if test failed or code linting wrong:
-        verbose_check_call('pytest', '-x')
+        verbose_check_call('pytest', '-x', exit_on_error=True)
         run_linters()
 
         poetry_publish(

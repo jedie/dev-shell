@@ -1,9 +1,18 @@
 import subprocess
+import sys
+from pathlib import Path
 from unittest.mock import patch
 
 from cmd2 import CommandResult
 
+import dev_shell
 from dev_shell.tests.fixtures import DevShellAppBaseTestCase
+from dev_shell.utils.assertion import assert_is_file
+
+
+OWN_DEV_SHELL_PATH = Path(dev_shell.__file__).parent.parent / 'dev-shell.py'
+OWN_DEV_SHELL_PATH = OWN_DEV_SHELL_PATH.relative_to(Path().cwd())
+assert_is_file(OWN_DEV_SHELL_PATH)
 
 
 class DevShellAppTestCase(DevShellAppBaseTestCase):
@@ -28,8 +37,27 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
         check_call_mock.assert_called_once()
         popenargs = check_call_mock.call_args[0][0]
         command = popenargs[0]
-        assert command.endswith('/.venv/bin/pytest')
+        assert 'pytest' in command
 
         # The call will be printed:
-        assert '.venv/bin/' in stdout
         assert 'pytest' in stdout
+
+    def test_linting(self):
+        subprocess.check_call([sys.executable, str(OWN_DEV_SHELL_PATH), 'linting'])
+
+    def test_return_code(self):
+        """
+        If pytest failed, the cmd2 app should sys.exit() with >0 return code.
+        Otherwise it's not useable in CI pipelines ;)
+
+        Provoke an error by trying to test a path that does not exist.
+        """
+        p = subprocess.run(
+            [sys.executable, str(OWN_DEV_SHELL_PATH), 'pytest', '/path/does/not/exists/'],
+            capture_output=True,
+            text=True
+        )
+        assert p.returncode > 0
+        assert 'file or directory not found: /path/does/not/exists/' in p.stderr
+        assert 'pytest /path/does/not/exists/' in p.stdout
+        assert f'finished with exit code {p.returncode}' in p.stdout
