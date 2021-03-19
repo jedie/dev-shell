@@ -3,7 +3,7 @@ from unittest.case import TestCase
 from cmd2 import CommandResult
 from cmd2_ext_test import ExternalTestMixin
 
-from dev_shell.cmd2app import DevShellApp, get_devshell_app_kwargs
+from dev_shell.dev_shell_app import DevShellApp, get_devshell_app_kwargs
 
 
 class CmdAppBaseTestCase(TestCase):
@@ -15,7 +15,7 @@ class CmdAppBaseTestCase(TestCase):
         """
         :return: cmd2 app instance
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def setUp(self):
         super().setUp()
