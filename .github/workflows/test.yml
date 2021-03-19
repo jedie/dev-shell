@@ -39,8 +39,7 @@ jobs:
 #    - name: 'Upload coverage report'
 #      run: bash <(curl -s https://codecov.io/bash)
 #
-# TODO:
-#    - name: 'Run linters'
-#      if: matrix.python-version == '3.8'
-#      run: |
-#        ./dev-shell.py lint
+    - name: 'Run linters'
+      if: matrix.python-version == '3.8'
+      run: |
+        python3 dev-shell.py linting
