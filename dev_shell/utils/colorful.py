@@ -5,32 +5,67 @@ import cmd2
 from cmd2 import fg
 
 
-def green_bold(msg: str) -> str:
-    return cmd2.ansi.style(msg, fg=fg.bright_green, bold=True)
+def red(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.red, bold=False)
 
 
-def yellow_bold(msg: str) -> str:
-    return cmd2.ansi.style(msg, fg=fg.bright_yellow, bold=True)
+def green(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.green, bold=False)
 
 
-def blue_bold(msg: str) -> str:
-    return cmd2.ansi.style(msg, fg=fg.bright_blue, bold=True)
+def yellow(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.yellow, bold=False)
 
 
-def magenta_bold(msg: str) -> str:
-    return cmd2.ansi.style(msg, fg=fg.bright_magenta, bold=True)
+def blue(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.blue, bold=False)
+
+
+def magenta(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.magenta, bold=False)
+
+
+def cyan(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.cyan, bold=False)
+
+
+def white(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.white, bold=False)
+
+
+###################################################################################################
+
+
+def bright_red(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_red, bold=False)
+
+
+def bright_green(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_green, bold=False)
+
+
+def bright_yellow(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_yellow, bold=False)
+
+
+def bright_blue(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_blue, bold=False)
+
+
+def bright_magenta(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_magenta, bold=False)
+
+
+def bright_cyan(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_cyan, bold=False)
+
+
+def bright_white(msg: str) -> str:
+    return cmd2.ansi.style(msg, fg=fg.bright_white, bold=False)
+
+
+###################################################################################################
 
 
 def print_error(err: str) -> None:
-    print(cmd2.ansi.style(
-        f'\n{err}\n',
-        fg=fg.bright_red, bold=True
-    ))
-
-
-def print_green_bold(msg: str) -> None:
-    print(green_bold(msg))
-
-
-def print_yellow_bold(msg: str) -> None:
-    print(yellow_bold(msg))
+    print(bright_red(f'\n{err}\n'))

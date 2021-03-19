@@ -5,7 +5,7 @@ from pathlib import Path
 import cmd2 as cmd2
 
 from dev_shell.config import DevShellConfig
-from dev_shell.utils.colorful import blue_bold, yellow_bold
+from dev_shell.utils.colorful import bright_blue, bright_yellow
 from dev_shell.utils.subprocess_utils import argv2str
 
 
@@ -24,9 +24,9 @@ class DevShellBaseApp(cmd2.Cmd):
         self.config = config
 
         self.intro = (
-            f'\n\nDeveloper shell - {yellow_bold(config.package_path.name)} - v{config.version}\n'
+            f'\n\nDeveloper shell - {bright_yellow(config.package_path.name)} - v{config.version}\n'
         )
-        self.prompt = f'\n({blue_bold(config.package_path.name)}) '
+        self.prompt = f'\n({bright_blue(config.package_path.name)}) '
 
         # work-a-round: https://github.com/python-cmd2/cmd2/issues/1072
         args = sys.argv[1:]

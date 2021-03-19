@@ -5,7 +5,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from dev_shell.utils.colorful import blue_bold, yellow_bold
+from dev_shell.utils.colorful import blue, bright_yellow, cyan, green
 
 
 def argv2str(argv):
@@ -17,14 +17,34 @@ def argv2str(argv):
 
 
 def _print_info(popenargs, kwargs):
-    command = argv2str(popenargs)
-
     print()
     print('_' * 100)
-    msg = f'Call: {yellow_bold(command)}'
+
+    command_str = argv2str(popenargs)
+
+    if ' ' in command_str:
+        command, args = command_str.split(' ', 1)
+    else:
+        command = command_str
+        args = ''
+
+    command_path = Path(command)
+    command_name = command_path.name
+    command_dir = command_path.parent
+
+    info = ''
+    if command_dir:
+        info += green(f'{command_dir}{os.sep}')
+    if command_name:
+        info += bright_yellow(command_name)
+    if args:
+        info += f' {blue(args)}'
+
+    msg = f'Call: {info}'
+
     verbose_kwargs = ', '.join(f'{k}={v!r}' for k, v in sorted(kwargs.items()))
     if verbose_kwargs:
-        msg += f' (kwargs: {blue_bold(verbose_kwargs)})'
+        msg += f' (kwargs: {cyan(verbose_kwargs)})'
 
     print(f'{msg}\n', flush=True)
 
