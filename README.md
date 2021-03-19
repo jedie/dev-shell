@@ -4,3 +4,9 @@
 
 
 tbd.
+
+
+## Project links
+
+* Github: https://github.com/jedie/dev-shell/
+* PyPi: https://pypi.org/project/dev-shell/
