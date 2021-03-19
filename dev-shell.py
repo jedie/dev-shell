@@ -23,25 +23,34 @@ except ImportError as err:
     print('Hint: "apt-get install python3-venv"')
     raise
 
-if sys.platform == 'win32':
-    BIN_NAME = 'Scripts'  # wtf
-else:
-    BIN_NAME = 'bin'
-
-VENV_PATH = Path('.venv')
-BIN_PATH = VENV_PATH / BIN_NAME
-PYTHON_PATH = BIN_PATH / 'python3'
-PIP_PATH = BIN_PATH / 'pip'
-POETRY_PATH = BIN_PATH / 'poetry'
-
-# script file defined in pyproject.toml as [tool.poetry.scripts]
-PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
-
 
 assert sys.version_info >= (3, 7), 'Python version is too old!'
 
 
+if sys.platform == 'win32':  # wtf
+    # Files under Windows, e.g.: .../.venv/Scripts/python3.exe
+    BIN_NAME = 'Scripts'
+    FILE_EXT = '.exe'
+else:
+    # Files under Linux/Mac and all other than Windows, e.g.: .../.venv/bin/python3
+    BIN_NAME = 'bin'
+    FILE_EXT = ''
+
+VENV_PATH = Path('.venv')
+BIN_PATH = VENV_PATH / BIN_NAME
+PYTHON_PATH = BIN_PATH / f'python3{FILE_EXT}'
+PIP_PATH = BIN_PATH / f'pip{FILE_EXT}'
+POETRY_PATH = BIN_PATH / f'poetry{FILE_EXT}'
+
+# script file defined in pyproject.toml as [tool.poetry.scripts]
+# (Under Windows: ".exe" not added!)
+PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
+
+
 def noop_signal_handler(signal_num, frame):
+    """
+    Signal handler that does nothing: Used to ignore "Ctrl-C" signals
+    """
     pass
 
 
@@ -68,17 +77,16 @@ if __name__ == '__main__':
         force_update = False
         extra_args = sys.argv[1:]
 
-    if not PIP_PATH.is_file() or force_update:
-        # make virtual env in ./venv/
-        print('Create venv here:', VENV_PATH.absolute())
+    # Create virtual env in ".../.venv/":
+    if not PYTHON_PATH.is_file() or force_update:
+        print('Create virtual env here:', VENV_PATH.absolute())
         builder = venv.EnvBuilder(symlinks=True, upgrade=True, with_pip=True)
         builder.create(env_dir=VENV_PATH)
 
+    # install/update "pip" and "poetry":
     if not POETRY_PATH.is_file() or force_update:
-        # install/update "pip" and "poetry"
-        if sys.platform != 'win32':
-            # Under Windows pip can't replace himself -> "Access is denied" on "pip.exe" ;)
-            subprocess.check_call([PIP_PATH, 'install', '-U', 'pip'])
+        # Note: Under Windows pip.exe can't replace this own .exe file, so use the module way:
+        subprocess.check_call([PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip'])
         subprocess.check_call([PIP_PATH, 'install', 'poetry'])
 
     # install / update via poetry
@@ -92,4 +100,5 @@ if __name__ == '__main__':
     signal.signal(signal.SIGINT, noop_signal_handler)
 
     # Run project cmd shell via "setup.py" entrypoint:
-    subprocess.call([PROJECT_SHELL_SCRIPT] + extra_args)
+    # (Call it via python, because Windows sucks calling the file direct)
+    subprocess.call([PYTHON_PATH, PROJECT_SHELL_SCRIPT] + extra_args)
