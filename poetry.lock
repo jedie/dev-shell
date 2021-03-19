@@ -308,7 +308,7 @@ dev = ["pre-commit", "tox"]
 
 [[package]]
 name = "poetry-publish"
-version = "0.4.0"
+version = "0.4.1"
 description = "Helper to build and upload a project that used poetry to PyPi, with prechecks"
 category = "dev"
 optional = false
@@ -881,8 +881,8 @@ pluggy = [
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
 ]
 poetry-publish = [
-    {file = "poetry-publish-0.4.0.tar.gz", hash = "sha256:9936ac587d9b94fa735ef53226f5f21242c8ecb0321195cc3c5cc55d4fda4bae"},
-    {file = "poetry_publish-0.4.0-py3-none-any.whl", hash = "sha256:de449fe0ff24f753e2d62e7dc7812b328b32df6fd3f3e6e84ec3d8cf352239f5"},
+    {file = "poetry-publish-0.4.1.tar.gz", hash = "sha256:24b4c14ae910b52539d23a9103f3f9b052559141fd90ad921b4be8e1a36080d5"},
+    {file = "poetry_publish-0.4.1-py3-none-any.whl", hash = "sha256:c7825a45549f2cd75c93bc997b2256f80d3cb6732f1c0a0b54be50bc15ec0dfc"},
 ]
 py = [
     {file = "py-1.10.0-py2.py3-none-any.whl", hash = "sha256:3b80836aa6d1feeaa108e046da6423ab8f6ceda6468545ae8d02d9d58d18818a"},
