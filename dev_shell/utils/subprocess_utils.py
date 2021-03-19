@@ -52,12 +52,15 @@ def _print_info(popenargs, kwargs):
 def prepare_popenargs(popenargs):
     popenargs = [str(part) for part in popenargs]  # e.g.: Path() instance -> str
 
-    command = Path(popenargs[0])
-    if not command.is_file():
+    command = popenargs[0]
+    if not Path(command).is_file():
+        # Search in PATH for this command that doesn't point to a existing file:
         command = shutil.which(command)
         if not command:
             raise FileNotFoundError(f'Command "{popenargs[0]}" not found in PATH!')
-        popenargs[0] = str(command)
+
+        # Replace command name with full path:
+        popenargs[0] = command
 
     return popenargs
 
