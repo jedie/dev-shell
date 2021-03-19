@@ -81,6 +81,13 @@ To update existing virtualenv, call with `--update`:
 
 Or just delete `/.venv/` and start `dev-shell.py` ;)
 
+## compatibility
+
+| dev-shell version | OS                      | Python version |
+|-------------------|-------------------------|----------------|
+| v0.0.1            | Linux + MacOS + Windows | 3.9, 3.8, 3.7  |
+
+See also github test configuration: [.github/workflows/test.yml](https://github.com/jedie/dev-shell/blob/main/.github/workflows/test.yml)
 
 ## Project links
 
