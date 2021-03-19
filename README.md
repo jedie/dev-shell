@@ -2,25 +2,30 @@
 
 [![pytest](https://github.com/jedie/dev-shell/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jedie/dev-shell/actions?query=branch%3Amain)
 
-tbd.
+This small project is intended to improve the start-up for collaborators.
 
-## Quickstart
+The idea is to make the project setup as simple as possible. Just clone the sources and start a script and you're done ;)
 
-First start of the Python script `./dev-shell.py` will bootstrap:
+Run Tests? Just start the script and call the "run test command".
 
-* Generate a virtualenv
-* Install poetry
-* Install dependencies and the project
+The "dev-shell" is the base to create a CLI and a shell. It also
 
-e.g.:
-
-Just clone the source and start the shell:
+It also shows how to make a project bootstrap as simply as possible, e.g.:
 
 ```bash
 ~$ git clone https://github.com/jedie/dev-shell.git
 ~$ cd dev-shell
-~/dev-shell$ ./dev-shell.py
+~/dev-shell$ ./dev-shell.py pytest
 ```
+
+
+## How it works
+
+First start of the Python script [./dev-shell.py](https://github.com/jedie/dev-shell/blob/main/dev-shell.py) will bootstrap:
+
+* Generate a Python virtual environment (in short: `venv`)
+* Install poetry
+* Install project dependencies and the project himself
 
 The output on first bootstrap start looks like:
 
@@ -55,7 +60,6 @@ Tests
 pytest
 
 ...
-
 
 (dev_shell) quit
 ~/dev-shell$
