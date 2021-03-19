@@ -1,6 +1,7 @@
 # A "dev-shell" for Python projects ;)
 
 [![pytest](https://github.com/jedie/dev-shell/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jedie/dev-shell/actions?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/jedie/dev-shell/branch/main/graph/badge.svg)](https://codecov.io/gh/jedie/dev-shell)
 
 This small project is intended to improve the start-up for collaborators.
 
