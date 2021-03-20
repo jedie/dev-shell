@@ -1,0 +1,9 @@
+.*
+!.gitignore
+__pycache__
+
+coverage.xml
+htmlcov
+
+/dist/
+publish.log
