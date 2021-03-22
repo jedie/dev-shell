@@ -96,8 +96,13 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.0.2...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.1.0...master)
   * TBC
+* [v0.1.0 - 2021-03-22](https://github.com/jedie/dev-shell/compare/v0.0.2...v0.1.0)
+  * Fix CI usage: Exit with correct return code if tests failed
+  * Better "run as CLI" implementation via new `run_cmd2_app()`
+  * Bugfix errors that only occur on Windows.
+  * Simplify `dev-shell.py` boot script and fix raise error if `ensurepip` missing
 * [v0.0.2 - 2021-03-19](https://github.com/jedie/dev-shell/compare/v0.0.1...v0.0.2)
   * refactor colorful shortcuts
   * display subprocess calls with separated colors
