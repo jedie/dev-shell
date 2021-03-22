@@ -1,9 +1,10 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.0.2"
+version = "0.1.0"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
+homepage = "https://github.com/jedie/dev-shell"
 license = "GNU General Public License v3.0"
 packages = [
     { include = "dev_shell" },
