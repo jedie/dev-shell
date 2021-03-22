@@ -3,9 +3,10 @@ import re
 import shlex
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
-from dev_shell.utils.colorful import blue, bright_yellow, cyan, green
+from dev_shell.utils.colorful import blue, bright_yellow, cyan, green, print_error
 
 
 def argv2str(argv):
@@ -70,6 +71,7 @@ def verbose_check_call(
         verbose=True,
         cwd=None,
         extra_env=None,
+        exit_on_error=False,
         **kwargs):
     """ 'verbose' version of subprocess.check_call() """
 
@@ -82,13 +84,20 @@ def verbose_check_call(
     if extra_env:
         env.update(extra_env)
 
-    subprocess.check_call(
-        popenargs,
-        universal_newlines=True,
-        env=env,
-        cwd=cwd,
-        **kwargs
-    )
+    try:
+        return subprocess.check_call(
+            popenargs,
+            universal_newlines=True,
+            env=env,
+            cwd=cwd,
+            **kwargs
+        )
+    except subprocess.CalledProcessError as err:
+        if exit_on_error:
+            if verbose:
+                print_error(f'Process "{popenargs[0]}" finished with exit code {err.returncode!r}')
+            sys.exit(err.returncode)
+        raise
 
 
 def verbose_check_output(*popenargs, verbose=True, cwd=None, extra_env=None, **kwargs):

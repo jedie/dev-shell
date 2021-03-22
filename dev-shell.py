@@ -48,18 +48,10 @@ POETRY_PATH = BIN_PATH / f'poetry{FILE_EXT}'
 PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
 
 
-def _subprocess(subprocess_func, popenargs):
+def verbose_check_call(*popenargs):
     popenargs = [str(arg) for arg in popenargs]  # e.g.: Path() -> str for python 3.7
     print(f'\n\n+ {" ".join(popenargs)}\n')
-    subprocess_func(popenargs)
-
-
-def verbose_check_call(*popenargs):
-    _subprocess(subprocess.check_call, popenargs)
-
-
-def verbose_call(*popenargs):
-    _subprocess(subprocess.call, popenargs)
+    return subprocess.check_call(popenargs)
 
 
 def noop_signal_handler(signal_num, frame):
@@ -116,4 +108,7 @@ if __name__ == '__main__':
 
     # Run project cmd shell via "setup.py" entrypoint:
     # (Call it via python, because Windows sucks calling the file direct)
-    verbose_call(PYTHON_PATH, PROJECT_SHELL_SCRIPT, *extra_args)
+    try:
+        verbose_check_call(PYTHON_PATH, PROJECT_SHELL_SCRIPT, *extra_args)
+    except subprocess.CalledProcessError as err:
+        sys.exit(err.returncode)
