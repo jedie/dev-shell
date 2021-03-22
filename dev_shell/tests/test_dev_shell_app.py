@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
 from cmd2 import CommandResult
 
 import dev_shell
@@ -50,14 +51,24 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
         If pytest failed, the cmd2 app should sys.exit() with >0 return code.
         Otherwise it's not useable in CI pipelines ;)
 
-        Provoke an error by trying to test a path that does not exist.
+        This tests also the "run as CLI" implementation.
         """
-        p = subprocess.run(
-            [sys.executable, str(OWN_DEV_SHELL_PATH), 'pytest', '/path/does/not/exists/'],
-            capture_output=True,
-            text=True
-        )
+        def call_pytest(*args):
+            return subprocess.run(
+                [sys.executable, str(OWN_DEV_SHELL_PATH), 'pytest'] + list(args),
+                capture_output=True,
+                text=True
+            )
+
+        # Provoke an error by trying to test a path that does not exist:
+        p = call_pytest('/path/does/not/exists/')
         assert p.returncode > 0
         assert 'file or directory not found: /path/does/not/exists/' in p.stderr
         assert 'pytest /path/does/not/exists/' in p.stdout
         assert f'finished with exit code {p.returncode}' in p.stdout
+
+        # Do something that normally should never fail:
+        p = call_pytest('--version')
+        assert p.stderr == f'pytest {pytest.__version__}\n'
+        assert 'finished with exit code' not in p.stdout
+        assert p.returncode == 0
