@@ -22,7 +22,7 @@ def run_linters():
         exit_on_error=True
     )
     verbose_check_call(
-        'flynt', '--fail-on-change', '--line_length=119', 'dev_shell',
+        'flynt', '--fail-on-change', '--line_length=119', '.',
         exit_on_error=True
     )
 
@@ -45,9 +45,9 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Fix code style by running: flynt, autopep8 and isort
         """
-        verbose_check_call('flynt', '--line_length=119', 'dev_shell')
+        verbose_check_call('flynt', '--line_length=119', '.')
         verbose_check_call(
-            'autopep8', '--aggressive', '--aggressive', '--in-place', '--recursive', 'dev_shell'
+            'autopep8', '--aggressive', '--aggressive', '--in-place', '--recursive', '.'
         )
         verbose_check_call('isort', '.')
 
