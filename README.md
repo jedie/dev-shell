@@ -90,13 +90,14 @@ Or just delete `/.venv/` and start `dev-shell.py` ;)
 
 | dev-shell version | OS                      | Python version |
 |-------------------|-------------------------|----------------|
-| v0.0.1            | Linux + MacOS + Windows | 3.9, 3.8, 3.7  |
+| >=v0.0.1          | Linux + MacOS + Windows | 3.9, 3.8, 3.7  |
 
 See also github test configuration: [.github/workflows/test.yml](https://github.com/jedie/dev-shell/blob/main/.github/workflows/test.yml)
 
 ## History
 
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.1.0...master)
+  * Remove "path" argument from flynt and autopep8 (So it's usable in external project, too.)
   * TBC
 * [v0.1.0 - 2021-03-22](https://github.com/jedie/dev-shell/compare/v0.0.2...v0.1.0)
   * Fix CI usage: Exit with correct return code if tests failed
