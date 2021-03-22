@@ -96,12 +96,12 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.0.1...master)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.0.2...main)
   * TBC
-* [v0.0.2 - 2021-03-19](https://github.com/jedie/poetry-publish/compare/v0.0.1...v0.0.2)
+* [v0.0.2 - 2021-03-19](https://github.com/jedie/dev-shell/compare/v0.0.1...v0.0.2)
   * refactor colorful shortcuts
   * display subprocess calls with separated colors
-* [v0.0.1 - 2021-03-19](https://github.com/jedie/poetry-publish/compare/ad5dca...v0.0.1)
+* [v0.0.1 - 2021-03-19](https://github.com/jedie/dev-shell/compare/ad5dca...v0.0.1)
   * first "useable" version
 
 ## Project links
