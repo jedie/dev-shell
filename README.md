@@ -73,18 +73,19 @@ The first bootstrap start takes a few seconds. Each later startup detects the ex
 
 Developer shell - dev_shell - v0.0.1alpha0
 
-(dev_shell)
-~/dev-shell$ ./dev-shell.py --update
+(dev_shell) help
 ```
 
+Info: The `.venv` will be automatically updated via `poetry install` call if the `poetry.lock` file has been changed.
 
-To update existing virtualenv, call with `--update`:
+A call with `--update` will force to call some create/update steps, e.g.:
 
 ```bash
 ~/dev-shell$ ./dev-shell.py --update
 ```
 
-Or just delete `/.venv/` and start `dev-shell.py` ;)
+You can also just delete `/.venv/` and start `dev-shell.py` again ;)
+
 
 ## compatibility
 
