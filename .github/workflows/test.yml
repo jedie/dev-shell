@@ -28,15 +28,15 @@ jobs:
 
     - name: 'Bootstrap'
       run: |
-        python3 dev-shell.py quit
+        python3 devshell.py quit
 
     - name: 'List installed packages'
       run: |
-        python3 dev-shell.py list_venv_packages
+        python3 devshell.py list_venv_packages
 
     - name: 'Run tests with Python v${{ matrix.python-version }}'
       run: |
-        python3 dev-shell.py pytest
+        python3 devshell.py pytest
 
     - name: 'Upload coverage report'
       if: matrix.os == 'ubuntu-latest'
@@ -45,4 +45,4 @@ jobs:
     - name: 'Run linters'
       if: matrix.python-version == '3.8'
       run: |
-        python3 dev-shell.py linting
+        python3 devshell.py linting

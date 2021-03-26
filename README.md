@@ -16,13 +16,13 @@ It also shows how to make a project bootstrap as simply as possible, e.g.:
 ```bash
 ~$ git clone https://github.com/jedie/dev-shell.git
 ~$ cd dev-shell
-~/dev-shell$ ./dev-shell.py pytest
+~/dev-shell$ ./devshell.py pytest
 ```
 
 
 ## How it works
 
-First start of the Python script [./dev-shell.py](https://github.com/jedie/dev-shell/blob/main/dev-shell.py) will bootstrap:
+First start of the Python script [./devshell.py](https://github.com/jedie/dev-shell/blob/main/devshell.py) will bootstrap:
 
 * Generate a Python virtual environment (in short: `venv`)
 * Install poetry
@@ -31,7 +31,7 @@ First start of the Python script [./dev-shell.py](https://github.com/jedie/dev-s
 The output on first bootstrap start looks like:
 
 ```bash
-~/dev-shell$ ./dev-shell.py
+~/dev-shell$ ./devshell.py
 Create venv here: ~/dev-shell/.venv
 Collecting pip
 ...
@@ -69,7 +69,7 @@ pytest
 The first bootstrap start takes a few seconds. Each later startup detects the existing virtualenv and is very fast:
 
 ```bash
-~/dev-shell$ ./dev-shell.py
+~/dev-shell$ ./devshell.py
 
 Developer shell - dev_shell - v0.0.1alpha0
 
@@ -81,10 +81,10 @@ Info: The `.venv` will be automatically updated via `poetry install` call if the
 A call with `--update` will force to call some create/update steps, e.g.:
 
 ```bash
-~/dev-shell$ ./dev-shell.py --update
+~/dev-shell$ ./devshell.py --update
 ```
 
-You can also just delete `/.venv/` and start `dev-shell.py` again ;)
+You can also just delete `/.venv/` and start `devshell.py` again ;)
 
 
 ## compatibility
@@ -103,7 +103,7 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
   * Fix CI usage: Exit with correct return code if tests failed
   * Better "run as CLI" implementation via new `run_cmd2_app()`
   * Bugfix errors that only occur on Windows.
-  * Simplify `dev-shell.py` boot script and fix raise error if `ensurepip` missing
+  * Simplify `devshell.py` boot script and fix raise error if `ensurepip` missing
 * [v0.0.2 - 2021-03-19](https://github.com/jedie/dev-shell/compare/v0.0.1...v0.0.2)
   * refactor colorful shortcuts
   * display subprocess calls with separated colors

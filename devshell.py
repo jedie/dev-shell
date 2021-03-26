@@ -82,8 +82,8 @@ def noop_signal_handler(signal_num, frame):
     pass
 
 
-if __name__ == '__main__':
-    if '--update' in sys.argv or '--help' in sys.argv:
+def main(argv):
+    if '--update' in argv or '--help' in argv:
         parser = argparse.ArgumentParser(
             prog=Path(__file__).name,
             description='Developer shell',
@@ -98,12 +98,12 @@ if __name__ == '__main__':
             nargs=argparse.ZERO_OR_MORE,
             help='arguments to pass to dev-setup shell/cli',
         )
-        options = parser.parse_args()
+        options = parser.parse_args(argv)
         force_update = options.update
-        extra_args = sys.argv[2:]
+        extra_args = argv[2:]
     else:
         force_update = False
-        extra_args = sys.argv[1:]
+        extra_args = argv[1:]
 
     # Create virtual env in ".../.venv/":
     if not PYTHON_PATH.is_file() or force_update:
@@ -134,3 +134,7 @@ if __name__ == '__main__':
         verbose_check_call(PYTHON_PATH, PROJECT_SHELL_SCRIPT, *extra_args)
     except subprocess.CalledProcessError as err:
         sys.exit(err.returncode)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
