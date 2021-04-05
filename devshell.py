@@ -83,7 +83,7 @@ def noop_signal_handler(signal_num, frame):
 
 
 def main(argv):
-    if '--update' in argv or '--help' in argv:
+    if len(argv) == 2 and argv[1] in ('--update', '--help'):
         parser = argparse.ArgumentParser(
             prog=Path(__file__).name,
             description='Developer shell',
