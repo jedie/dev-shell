@@ -15,11 +15,10 @@ class SubprocessMock:
     def __exit__(self, exc_type, exc_val, exc_tb):
         try:
             self.check_calls = []
-            for call in self.mock.call_args_list:
-                kwargs = call.kwargs
+            for args_list in self.mock.call_args_list:
+                # TODO: Use "call.kwargs" and "call.args" if we drop Python 3.7 support!
+                args, kwargs = args_list
 
-                args = call.args
-                assert len(args) == 1
                 popenargs = args[0]
                 if isinstance(popenargs, str):
                     command_str = popenargs

@@ -7,7 +7,7 @@ import sys
 from contextlib import redirect_stderr, redirect_stdout
 from hashlib import sha512
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import devshell
 from dev_shell.tests.utils import SubprocessMock
@@ -15,11 +15,19 @@ from dev_shell.utils.assertion import assert_is_dir, assert_is_file
 
 
 if sys.platform == 'win32':
-    BIN_PATH = '.venv/Scripts'
-    FILE_EXT = '.exe'
+    BIN_PATH = Path('.venv', 'Scripts')
+    VENV_PYTHON = BIN_PATH / 'python3.exe'
+    VENV_PIP = BIN_PATH / 'pip.exe'
+    VENV_POETRY = BIN_PATH / 'poetry.exe'
+    VENV_DEVSHELL = BIN_PATH / 'devshell'  # No ".exe" !
 else:
-    BIN_PATH = '.venv/bin'
-    FILE_EXT = ''
+    BIN_PATH = Path('.venv', 'bin')
+    VENV_PYTHON = BIN_PATH / 'python3'
+    VENV_PIP = BIN_PATH / 'pip'
+    VENV_POETRY = BIN_PATH / 'poetry'
+    VENV_DEVSHELL = BIN_PATH / 'devshell'
+
+DEVSHELL_CALL = f'{VENV_PYTHON} {VENV_DEVSHELL}'  # e.g.: ".venv/bin/python3 .venv/bin/devshell"
 
 
 def call_devsetup_main(*args, catch_sys_exit=False):
@@ -35,6 +43,11 @@ def call_devsetup_main(*args, catch_sys_exit=False):
                 raise
 
     check_calls = check_call_mock.check_calls
+
+    if sys.platform == 'win32':
+        # FIXME: e.g.: https://github.com/jedie/dev-shell/runs/2272270967
+        check_calls = [entry.replace("'", '').replace('"', '') for entry in check_calls]
+
     return check_calls, out.getvalue(), err.getvalue()
 
 
@@ -43,8 +56,8 @@ class BootstrapTestCase(TestCase):
         # .dep_hash is up-to-date -> no "poetry install" call:
         check_calls, stdout, stderr = call_devsetup_main()
         assert stderr == ''
-        assert f'{BIN_PATH}/python3{FILE_EXT} {BIN_PATH}/devshell\n' in stdout
-        assert check_calls == [f'{BIN_PATH}/python3{FILE_EXT} {BIN_PATH}/devshell']
+        assert f'{DEVSHELL_CALL}\n' in stdout
+        assert check_calls == [DEVSHELL_CALL]
         assert 'poetry' not in stdout
 
     def test_poetry_install_call(self):
@@ -67,26 +80,32 @@ class BootstrapTestCase(TestCase):
 
             check_calls, stdout, stderr = call_devsetup_main()
             assert stderr == ''
-            assert f'{BIN_PATH}/poetry{FILE_EXT} install' in stdout
-            assert f'{BIN_PATH}/python3{FILE_EXT} {BIN_PATH}/devshell\n' in stdout
+            assert f'{VENV_POETRY} install' in stdout
+            assert f'{VENV_PYTHON} {VENV_DEVSHELL}\n' in stdout
             assert check_calls == [
-                f'{BIN_PATH}/poetry{FILE_EXT} install',  # <<< install called?
-                f'{BIN_PATH}/python3{FILE_EXT} {BIN_PATH}/devshell'
+                f'{VENV_POETRY} install',  # <<< install called?
+                DEVSHELL_CALL
             ]
         finally:
             DEP_HASH_PATH.write_text(current_hash)
 
     def test_force_update(self):
-        check_calls, stdout, stderr = call_devsetup_main('devshell.py', '--update')
+        # EnvBuilder.create() will ran into "SameFileError" because we call the create()
+        # from the same venv to update the same venv ;)
+        # So we mock this call here.
+        with mock.patch('venv.EnvBuilder.create') as create_mock:
+            check_calls, stdout, stderr = call_devsetup_main('devshell.py', '--update')
+
         assert stderr == ''
-        assert f'{BIN_PATH}/poetry install' in stdout
-        assert f'{BIN_PATH}/python3{FILE_EXT} {BIN_PATH}/devshell\n' in stdout
+        assert f'{VENV_POETRY} install' in stdout
+        assert f'{DEVSHELL_CALL}\n' in stdout
         assert check_calls == [
-            f'{BIN_PATH}/python3{FILE_EXT} -m pip install -U pip',
-            f'{BIN_PATH}/pip{FILE_EXT} install poetry',
-            f'{BIN_PATH}/poetry{FILE_EXT} install',
-            f'{BIN_PATH}/python3{FILE_EXT} {BIN_PATH}/devshell'
+            f'{VENV_PYTHON} -m pip install -U pip',
+            f'{VENV_PIP} install poetry',
+            f'{VENV_POETRY} install',
+            DEVSHELL_CALL
         ]
+        create_mock.assert_called_once_with(env_dir=Path('.venv'))
 
     def test_help(self):
         check_calls, stdout, stderr = call_devsetup_main(
@@ -97,3 +116,17 @@ class BootstrapTestCase(TestCase):
         assert 'usage: devshell.py [-h] [--update] [command_args ' in stdout
         assert stdout.endswith('...live long and prosper...\n')
         assert check_calls == []
+
+    def test_pass_help(self):
+        """
+        A "--help" argument should be pass to a cmd2 command
+        """
+        check_calls, stdout, stderr = call_devsetup_main(
+            'devshell.py', 'not_existing_command', '--help',
+            catch_sys_exit=True
+        )
+        assert stderr == ''
+        assert 'not_existing_command --help' in stdout
+        assert check_calls == [
+            f'{DEVSHELL_CALL} not_existing_command --help'
+        ]
