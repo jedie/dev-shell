@@ -3,9 +3,9 @@
 name: Test
 
 on:
+  push:
   schedule:
     - cron: '0 8 * * *'
-  push:
 
 jobs:
   test:
@@ -14,7 +14,6 @@ jobs:
     env:
       PYTHONUNBUFFERED: 1
     strategy:
-      max-parallel: 4
       fail-fast: false
       matrix:
         python-version: [3.9, 3.8, 3.7]
