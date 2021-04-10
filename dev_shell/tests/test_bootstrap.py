@@ -10,24 +10,10 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 import devshell
+from dev_shell.constants import VENV_PATH
+from dev_shell.tests.constants import DEVSHELL_CALL, VENV_DEVSHELL, VENV_PIP, VENV_POETRY, VENV_PYTHON
 from dev_shell.tests.utils import SubprocessMock
 from dev_shell.utils.assertion import assert_is_dir, assert_is_file
-
-
-if sys.platform == 'win32':
-    BIN_PATH = Path('.venv', 'Scripts')
-    VENV_PYTHON = BIN_PATH / 'python3.exe'
-    VENV_PIP = BIN_PATH / 'pip.exe'
-    VENV_POETRY = BIN_PATH / 'poetry.exe'
-    VENV_DEVSHELL = BIN_PATH / 'devshell'  # No ".exe" !
-else:
-    BIN_PATH = Path('.venv', 'bin')
-    VENV_PYTHON = BIN_PATH / 'python3'
-    VENV_PIP = BIN_PATH / 'pip'
-    VENV_POETRY = BIN_PATH / 'poetry'
-    VENV_DEVSHELL = BIN_PATH / 'devshell'
-
-DEVSHELL_CALL = f'{VENV_PYTHON} {VENV_DEVSHELL}'  # e.g.: ".venv/bin/python3 .venv/bin/devshell"
 
 
 def call_devsetup_main(*args, catch_sys_exit=False):
@@ -105,7 +91,7 @@ class BootstrapTestCase(TestCase):
             f'{VENV_POETRY} install',
             DEVSHELL_CALL
         ]
-        create_mock.assert_called_once_with(env_dir=Path('.venv'))
+        create_mock.assert_called_once_with(env_dir=VENV_PATH)
 
     def test_help(self):
         check_calls, stdout, stderr = call_devsetup_main(

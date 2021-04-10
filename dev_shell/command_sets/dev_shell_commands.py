@@ -1,5 +1,3 @@
-import shutil
-
 import cmd2
 from poetry_publish.publish import poetry_publish
 
@@ -7,7 +5,7 @@ from dev_shell.command_sets import DevShellBaseCommandSet
 from dev_shell.utils.subprocess_utils import verbose_check_call
 
 
-def run_linters():
+def run_linters(cwd=None):
     """
     Run code formatters and linter
     """
@@ -15,14 +13,17 @@ def run_linters():
         'flake8',
         '--exclude=.git,__pycache__,.tox,.venv',
         '--max-line-length=119',
+        cwd=cwd,
         exit_on_error=True
     )
     verbose_check_call(
         'isort', '--check-only', '.',
+        cwd=cwd,
         exit_on_error=True
     )
     verbose_check_call(
         'flynt', '--fail-on-change', '--line_length=119', '.',
+        cwd=cwd,
         exit_on_error=True
     )
 
@@ -33,40 +34,58 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Run dev-shell tests via pytest
         """
-        verbose_check_call('pytest', *statement.arg_list, exit_on_error=True)
+        verbose_check_call(
+            'pytest',
+            *statement.arg_list,
+            cwd=self.config.base_path,
+            exit_on_error=True
+        )
 
     def do_linting(self, statement: cmd2.Statement):
         """
         Linting: Check code style with flake8, isort and flynt
         """
-        run_linters()
+        run_linters(cwd=self.config.base_path)
 
     def do_fix_code_style(self, statement: cmd2.Statement):
         """
         Fix code style by running: flynt, autopep8 and isort
         """
-        verbose_check_call('flynt', '--line_length=119', '.')
         verbose_check_call(
-            'autopep8', '--aggressive', '--aggressive', '--in-place', '--recursive', '.'
+            'flynt', '--line_length=119', '.',
+            cwd=self.config.base_path
         )
-        verbose_check_call('isort', '.')
+        verbose_check_call(
+            'autopep8', '--aggressive', '--aggressive', '--in-place', '--recursive', '.',
+            cwd=self.config.base_path
+        )
+        verbose_check_call(
+            'isort', '.',
+            cwd=self.config.base_path
+        )
 
     def do_list_venv_packages(self, statement: cmd2.Statement):
         """
         Just call "pip freeze" to list all installed venv packages
         """
-        pip = shutil.which('pip')
-        verbose_check_call(pip, 'freeze')
+        verbose_check_call(
+            'pip', 'freeze',
+            cwd=self.config.base_path
+        )
 
     def do_publish(self, statement: cmd2.Statement):
         """
         Publish "dev-shell" to PyPi
         """
         # Don't publish if test failed or code linting wrong:
-        verbose_check_call('pytest', '-x', exit_on_error=True)
-        run_linters()
+        verbose_check_call(
+            'pytest', '-x',
+            cwd=self.config.base_path,
+            exit_on_error=True,
+        )
+        run_linters(cwd=self.config.base_path)
 
         poetry_publish(
-            package_root=self.config.package_path,
+            package_root=self.config.base_path,
             version=self.config.version,
         )
