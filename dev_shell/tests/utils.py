@@ -7,41 +7,39 @@ from cmd2.ansi import strip_style
 from dev_shell.utils.subprocess_utils import argv2str
 
 
-class SubprocessMock:
-    def __init__(self, func_name: str = 'check_call'):
-        self.func_name = func_name
-        self.check_calls = None
-
-    def __enter__(self):
-        self.mock = mock.patch(f'subprocess.{self.func_name}').__enter__()
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
+def call_mocked_subprocess(func_name, func, *args, catch_sys_exit=False, **kwargs):
+    with mock.patch(f'subprocess.{func_name}') as cm:
         try:
-            self.check_calls = []
-            for args_list in self.mock.call_args_list:
-                # TODO: Use "call.kwargs" and "call.args" if we drop Python 3.7 support!
-                args, kwargs = args_list
+            func(*args, **kwargs)
+        except SystemExit:
+            if not catch_sys_exit:
+                raise
 
-                popenargs = args[0]
-                if isinstance(popenargs, str):
-                    command_str = popenargs
-                else:
-                    command_str = argv2str(popenargs)
+        check_calls = []
+        for args_list in cm.call_args_list:
+            # TODO: Use "call.kwargs" and "call.args" if we drop Python 3.7 support!
+            args, kwargs = args_list
 
-                cwd = kwargs.get('cwd')
-                if cwd:
-                    command_str = f'{cwd}$ {command_str}'
+            popenargs = args[0]
+            if isinstance(popenargs, str):
+                command_str = popenargs
+            else:
+                command_str = argv2str(popenargs)
 
-                self.check_calls.append(command_str)
-        finally:
-            self.mock.__exit__()
+            cwd = kwargs.get('cwd')
+            if cwd:
+                command_str = f'{cwd}$ {command_str}'
+
+            check_calls.append(command_str)
+
+        return check_calls
 
 
 class RedirectStdOutErr:
     """
     Buffer stdout + stderr with optional strip_style() call
     """
+
     def __init__(self):
         self._buffer = io.StringIO()
         self._output = None

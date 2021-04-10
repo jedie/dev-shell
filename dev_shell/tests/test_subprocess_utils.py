@@ -5,7 +5,7 @@ from unittest import TestCase
 
 from dev_shell.constants import BASE_PATH, BIN_PATH, VENV_PATH
 from dev_shell.tests.constants import VENV_PYTHON
-from dev_shell.tests.utils import RedirectStdOutErr, SubprocessMock
+from dev_shell.tests.utils import RedirectStdOutErr, call_mocked_subprocess
 from dev_shell.utils.subprocess_utils import _print_info, prepare_popenargs, verbose_check_call, verbose_check_output
 
 
@@ -105,13 +105,15 @@ class SubprocessUtilsTestCase(TestCase):
         assert output == '+ .venv$ bin/python --version'
 
     def test_verbose_check_call(self):
-        with RedirectStdOutErr() as redirector, SubprocessMock('check_call') as check_call_mock:
-            verbose_check_call(
+        with RedirectStdOutErr() as redirector:
+            check_calls = call_mocked_subprocess(
+                'check_call',
+                verbose_check_call,
                 str(VENV_PYTHON), '--version',
                 cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/,
                 shell=False
             )
-        assert check_call_mock.check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
+            assert check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
 
         output = redirector.get_output(remove_ansi=True)
         output = output.strip()
@@ -119,13 +121,15 @@ class SubprocessUtilsTestCase(TestCase):
         assert output == '+ .venv$ bin/python --version (kwargs: shell=False)'
 
     def test_check_output_mocked(self):
-        with RedirectStdOutErr() as redirector, SubprocessMock('check_output') as check_call_mock:
-            verbose_check_output(
+        with RedirectStdOutErr() as redirector:
+            check_calls = call_mocked_subprocess(
+                'check_output',
+                verbose_check_output,
                 VENV_PYTHON, '--version',
                 cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/
                 shell=False
             )
-        assert check_call_mock.check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
+            assert check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
 
         output = redirector.get_output(remove_ansi=True)
         output = output.strip()

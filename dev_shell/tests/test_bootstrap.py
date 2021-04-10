@@ -12,23 +12,20 @@ from unittest import TestCase, mock
 import devshell
 from dev_shell.constants import VENV_PATH
 from dev_shell.tests.constants import DEVSHELL_CALL, VENV_DEVSHELL, VENV_PIP, VENV_POETRY, VENV_PYTHON
-from dev_shell.tests.utils import SubprocessMock
+from dev_shell.tests.utils import call_mocked_subprocess
 from dev_shell.utils.assertion import assert_is_dir, assert_is_file
 
 
 def call_devsetup_main(*args, catch_sys_exit=False):
     out = io.StringIO()
     err = io.StringIO()
-    with redirect_stdout(out), redirect_stderr(err), \
-            SubprocessMock('check_call') as check_call_mock:
-
-        try:
-            devshell.main(args)
-        except SystemExit:
-            if not catch_sys_exit:
-                raise
-
-    check_calls = check_call_mock.check_calls
+    with redirect_stdout(out), redirect_stderr(err):
+        check_calls = call_mocked_subprocess(
+            'check_call',
+            devshell.main,
+            args,
+            catch_sys_exit=catch_sys_exit
+        )
 
     if sys.platform == 'win32':
         # FIXME: e.g.: https://github.com/jedie/dev-shell/runs/2272270967
