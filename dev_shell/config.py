@@ -10,6 +10,7 @@ class DevShellConfig:
     # Set by post init from package_module:
     version: str = dataclasses.field(init=False)
     package_path: Path = dataclasses.field(init=False)
+    base_path: Path = dataclasses.field(init=False)
 
     def __post_init__(self):
         assert self.package_module, 'Package module must be set!'
@@ -23,3 +24,4 @@ class DevShellConfig:
 
         self.version = self.package_module.__version__
         self.package_path = Path(self.package_module.__file__).parent
+        self.base_path = self.package_path.parent
