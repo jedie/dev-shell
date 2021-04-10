@@ -7,7 +7,9 @@ def assert_is_dir(path):
     """
     if not isinstance(path, Path):
         path = Path(path)
-    assert path.is_dir(), f'Directory does not exists: {path}'
+
+    if not path.is_dir():
+        raise NotADirectoryError(f'Directory does not exists: "{path}"')
 
 
 def assert_is_file(path):
@@ -16,5 +18,8 @@ def assert_is_file(path):
     """
     if not isinstance(path, Path):
         path = Path(path)
+
     assert_is_dir(path.parent)
-    assert path.is_file(), f'File does not exists: {path}'
+
+    if not path.is_file():
+        raise FileNotFoundError(f'File does not exists: "{path}"')

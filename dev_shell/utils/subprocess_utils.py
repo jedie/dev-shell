@@ -6,20 +6,59 @@ import subprocess
 import sys
 from pathlib import Path
 
-from dev_shell.utils.colorful import blue, bright_yellow, cyan, green, print_error
+from dev_shell.utils.assertion import assert_is_dir
+from dev_shell.utils.colorful import blue, bright_blue, bright_white, bright_yellow, cyan, green, print_error
 
 
 def argv2str(argv):
     """
     >>> argv2str(['foo', '--bar=123'])
     'foo --bar=123'
+    >>> argv2str([Path('/foo/bar'), '--foo'])
+    '/foo/bar --foo'
     """
-    return ' '.join(a if re.match(r'^[-0-9a-zA-Z_.=]+$', a) else shlex.quote(a) for a in argv)
+    items = []
+    for item in argv:
+        if isinstance(item, Path):
+            item = str(item)
+
+        if re.match(r'^[-0-9a-zA-Z_.=]+$', item):
+            items.append(item)
+        else:
+            items.append(shlex.quote(item))
+
+    return ' '.join(items)
 
 
-def _print_info(popenargs, kwargs):
+def make_relative_path(path, relative_to):
+    """
+    Makes {path} relative to {relative_to}, e.g.:
+    >>> str(make_relative_path(Path('/one/two/three'), relative_to=Path('/one')))
+    'two/three'
+
+    Will resolve the paths, e.g.:
+    >>> str(make_relative_path(Path('../one/two/three'), relative_to=Path('../one')))
+    'two/three'
+
+    Does nothing if {path} doesn't start with {relative_to}, e.g:
+    >>> str(make_relative_path(Path('/one/two'), relative_to=Path('/other/path')))
+    '/one/two'
+    """
+    assert isinstance(path, Path)
+    assert isinstance(relative_to, Path)
+    path = path.resolve()
+    try:
+        return path.relative_to(relative_to.resolve())
+    except ValueError:
+        # {path} doesn't start with {relative_to} -> do nothing
+        return path
+
+
+def _print_info(popenargs, *, cwd, kwargs):
     print()
     print('_' * 100)
+
+    cwd = make_relative_path(cwd, relative_to=Path.cwd())
 
     command_str = argv2str(popenargs)
 
@@ -29,19 +68,26 @@ def _print_info(popenargs, kwargs):
         command = command_str
         args = ''
 
-    command_path = Path(command)
+    command_path = make_relative_path(Path(command), relative_to=cwd)
+
     command_name = command_path.name
     command_dir = command_path.parent
 
     info = ''
-    if command_dir:
+
+    if cwd.absolute() != Path.cwd().absolute():
+        info = f'{bright_blue(str(cwd))}{bright_white("$")} '
+
+    if command_dir and command_dir != Path.cwd():
         info += green(f'{command_dir}{os.sep}')
+
     if command_name:
         info += bright_yellow(command_name)
+
     if args:
         info += f' {blue(args)}'
 
-    msg = f'Call: {info}'
+    msg = f'+ {info}'
 
     verbose_kwargs = ', '.join(f'{k}={v!r}' for k, v in sorted(kwargs.items()))
     if verbose_kwargs:
@@ -50,8 +96,13 @@ def _print_info(popenargs, kwargs):
     print(f'{msg}\n', flush=True)
 
 
-def prepare_popenargs(popenargs):
+def prepare_popenargs(popenargs, cwd=None):
     popenargs = [str(part) for part in popenargs]  # e.g.: Path() instance -> str
+
+    if cwd is None:
+        cwd = Path.cwd()
+    else:
+        assert_is_dir(cwd)
 
     command = popenargs[0]
     if not Path(command).is_file():
@@ -63,7 +114,7 @@ def prepare_popenargs(popenargs):
         # Replace command name with full path:
         popenargs[0] = command
 
-    return popenargs
+    return popenargs, cwd
 
 
 def verbose_check_call(
@@ -75,10 +126,10 @@ def verbose_check_call(
         **kwargs):
     """ 'verbose' version of subprocess.check_call() """
 
-    popenargs = prepare_popenargs(popenargs)
+    popenargs, cwd = prepare_popenargs(popenargs, cwd=cwd)
 
     if verbose:
-        _print_info(popenargs, kwargs)
+        _print_info(popenargs, cwd=cwd, kwargs=kwargs)
 
     env = os.environ.copy()
     if extra_env:
@@ -103,10 +154,10 @@ def verbose_check_call(
 def verbose_check_output(*popenargs, verbose=True, cwd=None, extra_env=None, **kwargs):
     """ 'verbose' version of subprocess.check_output() """
 
-    popenargs = prepare_popenargs(popenargs)
+    popenargs, cwd = prepare_popenargs(popenargs, cwd=cwd)
 
     if verbose:
-        _print_info(popenargs, kwargs)
+        _print_info(popenargs, cwd=cwd, kwargs=kwargs)
 
     env = os.environ.copy()
     if extra_env:

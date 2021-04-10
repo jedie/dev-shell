@@ -1,0 +1,145 @@
+import os
+import platform
+from pathlib import Path
+from unittest import TestCase
+
+from dev_shell.constants import BASE_PATH, BIN_PATH, VENV_PATH
+from dev_shell.tests.constants import VENV_PYTHON
+from dev_shell.tests.utils import RedirectStdOutErr, SubprocessMock
+from dev_shell.utils.subprocess_utils import _print_info, prepare_popenargs, verbose_check_call, verbose_check_output
+
+
+class SubprocessUtilsTestCase(TestCase):
+    def setUp(self):
+        super().setUp()
+        self.origin_cwd = Path.cwd()
+        os.chdir(BASE_PATH)
+
+    def tearDown(self):
+        super().tearDown()
+        os.chdir(self.origin_cwd)
+
+    def test_prepare_popenargs(self):
+        popenargs, cwd = prepare_popenargs(
+            popenargs=[BASE_PATH / 'devshell.py'],
+            cwd=None
+        )
+        assert popenargs == [str(BASE_PATH / 'devshell.py')]
+        assert cwd == BASE_PATH
+
+        popenargs, cwd = prepare_popenargs(
+            popenargs=['python3', '--version'],
+            cwd=None
+        )
+        assert popenargs == [str(VENV_PYTHON), '--version']
+        assert cwd == BASE_PATH
+
+        popenargs, cwd = prepare_popenargs(
+            popenargs=['python3', '--version'],
+            cwd=Path.cwd()
+        )
+        assert popenargs == [str(VENV_PYTHON), '--version']
+        assert cwd == BASE_PATH
+
+        popenargs, cwd = prepare_popenargs(
+            popenargs=['python3', '--version'],
+            cwd=BIN_PATH
+        )
+        assert popenargs == [str(VENV_PYTHON), '--version']
+        assert cwd == BIN_PATH
+
+        popenargs, cwd = prepare_popenargs(
+            popenargs=['python3', '--version'],
+            cwd=BIN_PATH.parent  # .../dev-shell/.venv/
+        )
+        assert popenargs == [str(VENV_PYTHON), '--version']
+        assert cwd == BIN_PATH.parent
+
+        popenargs, cwd = prepare_popenargs(
+            popenargs=['python3', '--version'],
+            cwd=Path(__file__).parent
+        )
+        assert popenargs == [str(VENV_PYTHON), '--version']
+        assert cwd == Path(__file__).parent
+
+        with self.assertRaises(NotADirectoryError) as cm:
+            prepare_popenargs(
+                popenargs=['does not exists'],
+                cwd='/does/not/exists/'
+            )
+        assert cm.exception.args[0] == 'Directory does not exists: "/does/not/exists"'
+
+        with self.assertRaises(FileNotFoundError) as cm:
+            prepare_popenargs(popenargs=['does not exists'])
+        assert cm.exception.args[0] == 'Command "does not exists" not found in PATH!'
+
+    def test_print_info(self):
+        def call_print_info(*args, **kwargs):
+            with RedirectStdOutErr() as redirector:
+                _print_info(*args, **kwargs)
+
+            output = redirector.get_output(remove_ansi=True)
+            output = output.strip()
+            output = output.lstrip('\n_')
+            return output
+
+        output = call_print_info(
+            popenargs=['python3', '--version'],
+            cwd=Path.cwd(),
+            kwargs={}
+        )
+        assert output == '+ ./python3 --version'
+
+        output = call_print_info(
+            popenargs=['foo', '--bar'],
+            cwd=Path('/somewhere/'),
+            kwargs={'shell': False}
+        )
+        assert output == '+ /somewhere$ foo --bar (kwargs: shell=False)'
+
+        output = call_print_info(
+            popenargs=[str(VENV_PYTHON), '--version'],
+            cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/,
+            kwargs={}
+        )
+        assert output == '+ .venv$ bin/python3 --version'
+
+    def test_verbose_check_call(self):
+        with RedirectStdOutErr() as redirector, SubprocessMock('check_call') as check_call_mock:
+            verbose_check_call(
+                str(VENV_PYTHON), '--version',
+                cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/,
+                kwargs={'shell': False}
+            )
+        assert check_call_mock.check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
+
+        output = redirector.get_output(remove_ansi=True)
+        output = output.strip()
+        output = output.lstrip('\n_')
+        assert output == "+ .venv$ bin/python3 --version (kwargs: kwargs={'shell': False})"
+
+    def test_check_output_mocked(self):
+        with RedirectStdOutErr() as redirector, SubprocessMock('check_output') as check_call_mock:
+            verbose_check_output(
+                str(VENV_PYTHON), '--version',
+                cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/,
+                kwargs={'shell': False}
+            )
+        assert check_call_mock.check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
+
+        output = redirector.get_output(remove_ansi=True)
+        output = output.strip()
+        output = output.lstrip('\n_')
+        assert output == "+ .venv$ bin/python3 --version (kwargs: kwargs={'shell': False})"
+
+    def test_check_output(self):
+        with RedirectStdOutErr() as redirector:
+            output = verbose_check_output(
+                VENV_PYTHON, '--version',
+            )
+            assert output == f'Python {platform.python_version()}\n'
+
+        output = redirector.get_output(remove_ansi=True)
+        output = output.strip()
+        output = output.lstrip('\n_')
+        assert output == '+ .venv/bin/python3 --version'
