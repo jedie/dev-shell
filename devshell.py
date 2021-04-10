@@ -114,7 +114,7 @@ def main(argv):
     # install/update "pip" and "poetry":
     if not POETRY_PATH.is_file() or force_update:
         # Note: Under Windows pip.exe can't replace this own .exe file, so use the module way:
-        verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip')
+        verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip', 'setuptools')
         verbose_check_call(PIP_PATH, 'install', 'poetry')
 
     # install via poetry, if:

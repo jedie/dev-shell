@@ -100,7 +100,7 @@ class BootstrapTestCase(TestCase):
         assert f'{VENV_POETRY} install' in stdout
         assert f'{DEVSHELL_CALL}\n' in stdout
         assert check_calls == [
-            f'{VENV_PYTHON} -m pip install -U pip',
+            f'{VENV_PYTHON} -m pip install -U pip setuptools',
             f'{VENV_PIP} install poetry',
             f'{VENV_POETRY} install',
             DEVSHELL_CALL
