@@ -6,7 +6,33 @@ from unittest import TestCase
 from dev_shell.constants import BASE_PATH, BIN_PATH, VENV_PATH
 from dev_shell.tests.constants import VENV_PYTHON
 from dev_shell.tests.utils import RedirectStdOutErr, call_mocked_subprocess
-from dev_shell.utils.subprocess_utils import _print_info, prepare_popenargs, verbose_check_call, verbose_check_output
+from dev_shell.utils.subprocess_utils import (
+    _print_info,
+    make_relative_path,
+    prepare_popenargs,
+    verbose_check_call,
+    verbose_check_output,
+)
+
+
+class MakeRelativPathTestCase(TestCase):
+    def test_basic(self):
+        p = make_relative_path(Path('/one/two/three'), relative_to=Path('/one'))
+        assert p == Path('two/three')
+
+        p = make_relative_path(
+            Path('/foo/bar/.venv/bin/python'),
+            relative_to=Path('/foo/bar/.venv')
+        )
+        assert p == Path('bin/python')
+
+    def test_make_absolute(self):
+        p = make_relative_path(Path('../one/two/three'), relative_to=Path('../one'))
+        assert p == Path('two/three')
+
+    def test_no_relative(self):
+        p = make_relative_path(Path('/one/two'), relative_to=Path('/other/path'))
+        assert p == Path('/one/two')
 
 
 class SubprocessUtilsTestCase(TestCase):

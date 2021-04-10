@@ -32,20 +32,7 @@ def argv2str(argv):
 
 def make_relative_path(path, relative_to):
     """
-    Makes {path} relative to {relative_to}, e.g.:
-    >>> str(make_relative_path(Path('/one/two/three'), relative_to=Path('/one')))
-    'two/three'
-
-    >>> str(make_relative_path(Path('/foo/bar/.venv/bin/python'), relative_to=Path('/foo/bar/.venv')))
-    'bin/python'
-
-    Will resolve the paths, e.g.:
-    >>> str(make_relative_path(Path('../one/two/three'), relative_to=Path('../one')))
-    'two/three'
-
-    Does nothing if {path} doesn't start with {relative_to}, e.g:
-    >>> str(make_relative_path(Path('/one/two'), relative_to=Path('/other/path')))
-    '/one/two'
+    Makes {path} relative to {relative_to}, if possible.
     """
     assert isinstance(path, Path)
     assert isinstance(relative_to, Path)
