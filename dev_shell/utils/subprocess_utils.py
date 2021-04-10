@@ -122,10 +122,10 @@ def prepare_popenargs(popenargs, cwd=None):
     if not command_path.is_file():
         # Lookup in current venv bin path first:
         bin_path = str(Path(sys.executable).parent.absolute())
-        command = shutil.which(command_path, path=bin_path)
+        command = shutil.which(str(command_path), path=bin_path)
         if not command:
             # Search in PATH for this command that doesn't point to a existing file:
-            command = shutil.which(command_path)
+            command = shutil.which(str(command_path))
             if not command:
                 raise FileNotFoundError(f'Command "{popenargs[0]}" not found in PATH!')
 
