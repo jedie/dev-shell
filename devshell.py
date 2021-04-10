@@ -8,6 +8,7 @@
 """
 
 import argparse
+import hashlib
 import signal
 import subprocess
 import sys
@@ -19,7 +20,7 @@ try:
     import ensurepip  # noqa
 except ModuleNotFoundError as err:
     print(err)
-    print('-'*100)
+    print('-' * 100)
     print('Error: Pip not available!')
     print('Hint: "apt-get install python3-venv"\n')
     raise
@@ -43,15 +44,35 @@ PYTHON_PATH = BIN_PATH / f'python3{FILE_EXT}'
 PIP_PATH = BIN_PATH / f'pip{FILE_EXT}'
 POETRY_PATH = BIN_PATH / f'poetry{FILE_EXT}'
 
+DEP_LOCK_PATH = Path('poetry.lock')
+DEP_HASH_PATH = VENV_PATH / '.dep_hash'
+
 # script file defined in pyproject.toml as [tool.poetry.scripts]
 # (Under Windows: ".exe" not added!)
 PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
 
 
-def verbose_check_call(*popenargs):
-    popenargs = [str(arg) for arg in popenargs]  # e.g.: Path() -> str for python 3.7
-    print(f'\n\n+ {" ".join(popenargs)}\n')
-    return subprocess.check_call(popenargs)
+def get_dep_hash():
+    """ Get SHA512 hash from poetry.lock content. """
+    return hashlib.sha512(DEP_LOCK_PATH.read_bytes()).hexdigest()
+
+
+def store_dep_hash():
+    """ Generate /.venv/.dep_hash """
+    DEP_HASH_PATH.write_text(get_dep_hash())
+
+
+def venv_up2date():
+    """ Is existing .venv is up-to-date? """
+    if DEP_HASH_PATH.is_file():
+        return DEP_HASH_PATH.read_text() == get_dep_hash()
+    return False
+
+
+def verbose_check_call(*popen_args):
+    popen_args = [str(arg) for arg in popen_args]  # e.g.: Path() -> str for python 3.7
+    print(f'\n+ {" ".join(popen_args)}\n')
+    return subprocess.check_call(popen_args)
 
 
 def noop_signal_handler(signal_num, frame):
@@ -61,8 +82,8 @@ def noop_signal_handler(signal_num, frame):
     pass
 
 
-if __name__ == '__main__':
-    if '--update' in sys.argv or '--help' in sys.argv:
+def main(argv):
+    if len(argv) == 2 and argv[1] in ('--update', '--help'):
         parser = argparse.ArgumentParser(
             prog=Path(__file__).name,
             description='Developer shell',
@@ -77,12 +98,12 @@ if __name__ == '__main__':
             nargs=argparse.ZERO_OR_MORE,
             help='arguments to pass to dev-setup shell/cli',
         )
-        options = parser.parse_args()
+        options = parser.parse_args(argv)
         force_update = options.update
-        extra_args = sys.argv[2:]
+        extra_args = argv[2:]
     else:
         force_update = False
-        extra_args = sys.argv[1:]
+        extra_args = argv[1:]
 
     # Create virtual env in ".../.venv/":
     if not PYTHON_PATH.is_file() or force_update:
@@ -96,12 +117,13 @@ if __name__ == '__main__':
         verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip')
         verbose_check_call(PIP_PATH, 'install', 'poetry')
 
-    # install / update via poetry
-    if not PROJECT_SHELL_SCRIPT.is_file():
+    # install via poetry, if:
+    #   1. .venv not exists
+    #   2. "--update" used
+    #   3. poetry.lock file was changed
+    if not PROJECT_SHELL_SCRIPT.is_file() or force_update or not venv_up2date():
         verbose_check_call(POETRY_PATH, 'install')
-    elif force_update:
-        verbose_check_call(POETRY_PATH, 'update')
-        print('\nUpdate done.')
+        store_dep_hash()
 
     # The cmd2 shell should not abort on Ctrl-C => ignore "Interrupt from keyboard" signal:
     signal.signal(signal.SIGINT, noop_signal_handler)
@@ -112,3 +134,7 @@ if __name__ == '__main__':
         verbose_check_call(PYTHON_PATH, PROJECT_SHELL_SCRIPT, *extra_args)
     except subprocess.CalledProcessError as err:
         sys.exit(err.returncode)
+
+
+if __name__ == '__main__':
+    main(sys.argv)

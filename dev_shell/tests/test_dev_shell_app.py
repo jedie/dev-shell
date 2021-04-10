@@ -11,7 +11,7 @@ from dev_shell.tests.fixtures import DevShellAppBaseTestCase
 from dev_shell.utils.assertion import assert_is_file
 
 
-OWN_DEV_SHELL_PATH = Path(dev_shell.__file__).parent.parent / 'dev-shell.py'
+OWN_DEV_SHELL_PATH = Path(dev_shell.__file__).parent.parent / 'devshell.py'
 OWN_DEV_SHELL_PATH = OWN_DEV_SHELL_PATH.relative_to(Path().cwd())
 assert_is_file(OWN_DEV_SHELL_PATH)
 
