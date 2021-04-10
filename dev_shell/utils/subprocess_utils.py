@@ -36,6 +36,9 @@ def make_relative_path(path, relative_to):
     >>> str(make_relative_path(Path('/one/two/three'), relative_to=Path('/one')))
     'two/three'
 
+    >>> str(make_relative_path(Path('/foo/bar/.venv/bin/python'), relative_to=Path('/foo/bar/.venv')))
+    'bin/python'
+
     Will resolve the paths, e.g.:
     >>> str(make_relative_path(Path('../one/two/three'), relative_to=Path('../one')))
     'two/three'
@@ -46,19 +49,28 @@ def make_relative_path(path, relative_to):
     """
     assert isinstance(path, Path)
     assert isinstance(relative_to, Path)
-    path = path.resolve()
+
+    path = path.absolute()
+    relative_to = relative_to.absolute()
+
     try:
-        return path.relative_to(relative_to.resolve())
-    except ValueError:
-        # {path} doesn't start with {relative_to} -> do nothing
-        return path
+        is_relative_to = path.is_relative_to(relative_to)
+    except AttributeError:  # is_relative_to() is new in Python 3.9
+        try:
+            path = path.relative_to(relative_to)
+        except ValueError:
+            # {path} doesn't start with {relative_to} -> do nothing
+            pass
+    else:
+        if is_relative_to:
+            path = path.relative_to(relative_to)
+
+    return path
 
 
 def _print_info(popenargs, *, cwd, kwargs):
     print()
     print('_' * 100)
-
-    cwd = make_relative_path(cwd, relative_to=Path.cwd())
 
     command_str = argv2str(popenargs)
 
@@ -69,6 +81,7 @@ def _print_info(popenargs, *, cwd, kwargs):
         args = ''
 
     command_path = make_relative_path(Path(command), relative_to=cwd)
+    cwd = make_relative_path(cwd, relative_to=Path.cwd())
 
     command_name = command_path.name
     command_dir = command_path.parent
@@ -104,12 +117,17 @@ def prepare_popenargs(popenargs, cwd=None):
     else:
         assert_is_dir(cwd)
 
-    command = popenargs[0]
-    if not Path(command).is_file():
-        # Search in PATH for this command that doesn't point to a existing file:
-        command = shutil.which(command)
+    command_path = Path(popenargs[0])
+
+    if not command_path.is_file():
+        # Lookup in current venv bin path first:
+        bin_path = str(Path(sys.executable).parent.absolute())
+        command = shutil.which(command_path, path=bin_path)
         if not command:
-            raise FileNotFoundError(f'Command "{popenargs[0]}" not found in PATH!')
+            # Search in PATH for this command that doesn't point to a existing file:
+            command = shutil.which(command_path)
+            if not command:
+                raise FileNotFoundError(f'Command "{popenargs[0]}" not found in PATH!')
 
         # Replace command name with full path:
         popenargs[0] = command
