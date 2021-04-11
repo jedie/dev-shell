@@ -8,10 +8,11 @@ from cmd2.ansi import strip_style
 def call_mocked_subprocess(func_name, func, *args, catch_sys_exit=False, **kwargs):
     with mock.patch(f'subprocess.{func_name}') as cm:
         try:
-            func(*args, **kwargs)
+            result = func(*args, **kwargs)
         except SystemExit:
             if not catch_sys_exit:
                 raise
+            result = None
 
         check_calls = []
         for args_list in cm.call_args_list:
@@ -30,7 +31,7 @@ def call_mocked_subprocess(func_name, func, *args, catch_sys_exit=False, **kwarg
 
             check_calls.append(command_str)
 
-        return check_calls
+        return check_calls, result
 
 
 class RedirectStdOutErr:

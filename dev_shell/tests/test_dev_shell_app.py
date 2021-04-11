@@ -8,6 +8,7 @@ from cmd2 import CommandResult
 
 import dev_shell
 from dev_shell.tests.fixtures import DevShellAppBaseTestCase
+from dev_shell.tests.utils import call_mocked_subprocess
 from dev_shell.utils.assertion import assert_is_file
 
 
@@ -42,6 +43,30 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
 
         # The call will be printed:
         assert 'pytest' in stdout
+
+    def test_do_update(self):
+        origin_sys_argv = sys.argv.copy()
+        try:
+            sys.argv = ['TheDevScript.py']
+            check_calls, (stdout, stderr) = call_mocked_subprocess(
+                'check_call',
+                self.execute,
+                command='update'
+            )
+
+            assert stderr == ''
+
+            assert len(check_calls) == 1
+            if sys.platform == 'win32':
+                assert check_calls[0].endswith(r'.venv\Scripts\poetry.exe update')
+                assert '\n+ .venv\\Scripts\\poetry.exe update\n' in stdout
+            else:
+                assert check_calls[0].endswith('.venv/bin/poetry update')
+                assert '\n+ .venv/bin/poetry update\n' in stdout
+
+            assert '\nPlease restart "TheDevScript.py" !\n' in stdout
+        finally:
+            sys.argv = origin_sys_argv
 
     def test_linting(self):
         subprocess.check_call([sys.executable, str(OWN_DEV_SHELL_PATH), 'linting'])

@@ -20,7 +20,7 @@ def call_devsetup_main(*args, catch_sys_exit=False):
     out = io.StringIO()
     err = io.StringIO()
     with redirect_stdout(out), redirect_stderr(err):
-        check_calls = call_mocked_subprocess(
+        check_calls, result = call_mocked_subprocess(
             'check_call',
             devshell.main,
             args,

@@ -47,18 +47,17 @@ Package operations: 31 installs, 1 update, 0 removals
 Installing the current project: dev-shell (0.0.1alpha0)
 
 
-Developer shell - dev_shell - v0.0.1alpha0
++ .venv/bin/python .venv/bin/devshell
+
+
+Developer shell - dev_shell - v0.2.0rc1
 
 
 Documented commands (use 'help -v' for verbose/'help <topic>' for details):
 
-Publish
-=======
-publish
-
-Tests
-=====
-pytest
+dev-shell commands
+==================
+fix_code_style  linting  list_venv_packages  publish  pytest  update
 
 ...
 
@@ -71,7 +70,7 @@ The first bootstrap start takes a few seconds. Each later startup detects the ex
 ```bash
 ~/dev-shell$ ./devshell.py
 
-Developer shell - dev_shell - v0.0.1alpha0
+Developer shell - dev_shell - v0.2.0rc1
 
 (dev_shell) help
 ```
@@ -85,6 +84,8 @@ A call with `--update` will force to call some create/update steps, e.g.:
 ```
 
 You can also just delete `/.venv/` and start `devshell.py` again ;)
+
+(Using `--update` is not to be confused with the call of "update" command.)
 
 
 ## compatibility

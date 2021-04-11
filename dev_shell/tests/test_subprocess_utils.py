@@ -1,4 +1,5 @@
 import os
+import platform
 import sys
 from pathlib import Path
 from unittest import TestCase
@@ -12,6 +13,7 @@ from dev_shell.utils.subprocess_utils import (
     make_relative_path,
     prepare_popenargs,
     verbose_check_call,
+    verbose_check_output,
 )
 
 
@@ -139,7 +141,7 @@ class SubprocessUtilsTestCase(TestCase):
 
     def test_verbose_check_call(self):
         with RedirectStdOutErr() as redirector:
-            check_calls = call_mocked_subprocess(
+            check_calls, result = call_mocked_subprocess(
                 'check_call',
                 verbose_check_call,
                 str(VENV_PYTHON), '--version',
@@ -156,38 +158,38 @@ class SubprocessUtilsTestCase(TestCase):
         else:
             assert output == '+ .venv$ bin/python --version (kwargs: shell=False)'
 
-    # def test_check_output_mocked(self):
-    #     with RedirectStdOutErr() as redirector:
-    #         check_calls = call_mocked_subprocess(
-    #             'check_output',
-    #             verbose_check_output,
-    #             VENV_PYTHON, '--version',
-    #             cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/
-    #             shell=False
-    #         )
-    #         assert check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
-    #
-    #     output = redirector.get_output(remove_ansi=True)
-    #     output = output.strip()
-    #     output = output.lstrip('\n_')
-    #     if sys.platform == 'win32':
-    #         assert output == r'+ .venv$ Scripts\python.exe --version (kwargs: shell=False)'
-    #     else:
-    #         assert output == '+ .venv$ bin/python --version (kwargs: shell=False)'
-    #
-    # def test_check_output(self):
-    #     with RedirectStdOutErr() as redirector:
-    #         output = verbose_check_output(
-    #             VENV_PYTHON, '--version',
-    #             cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/
-    #             shell=False
-    #         )
-    #         assert output == f'Python {platform.python_version()}\n'
-    #
-    #     output = redirector.get_output(remove_ansi=True)
-    #     output = output.strip()
-    #     output = output.lstrip('\n_')
-    #     if sys.platform == 'win32':
-    #         assert output == r'+ .venv$ Scripts\python.exe --version (kwargs: shell=False)'
-    #     else:
-    #         assert output == '+ .venv$ bin/python --version (kwargs: shell=False)'
+    def test_check_output_mocked(self):
+        with RedirectStdOutErr() as redirector:
+            check_calls, result = call_mocked_subprocess(
+                'check_output',
+                verbose_check_output,
+                VENV_PYTHON, '--version',
+                cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/
+                shell=False
+            )
+            assert check_calls == [f'{VENV_PATH}$ {VENV_PYTHON} --version']
+
+        output = redirector.get_output(remove_ansi=True)
+        output = output.strip()
+        output = output.lstrip('\n_')
+        if sys.platform == 'win32':
+            assert output == r'+ .venv$ Scripts\python.exe --version (kwargs: shell=False)'
+        else:
+            assert output == '+ .venv$ bin/python --version (kwargs: shell=False)'
+
+    def test_check_output(self):
+        with RedirectStdOutErr() as redirector:
+            output = verbose_check_output(
+                VENV_PYTHON, '--version',
+                cwd=Path(BIN_PATH / '..').resolve(),  # .../dev-shell/.venv/
+                shell=False
+            )
+            assert output == f'Python {platform.python_version()}\n'
+
+        output = redirector.get_output(remove_ansi=True)
+        output = output.strip()
+        output = output.lstrip('\n_')
+        if sys.platform == 'win32':
+            assert output == r'+ .venv$ Scripts\python.exe --version (kwargs: shell=False)'
+        else:
+            assert output == '+ .venv$ bin/python --version (kwargs: shell=False)'
