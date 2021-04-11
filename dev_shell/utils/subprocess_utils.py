@@ -14,8 +14,6 @@ def argv2str(argv):
     """
     >>> argv2str(['foo', '--bar=123'])
     'foo --bar=123'
-    >>> argv2str([Path('/foo/bar'), '--foo'])
-    '/foo/bar --foo'
     """
     items = []
     for item in argv:
@@ -30,15 +28,29 @@ def argv2str(argv):
     return ' '.join(items)
 
 
+def make_absolute_path(path):
+    """
+    Resolve the path, but not for symlinks.
+    e.g.: '.venv/bin/python' is a symlink to e.g.: '/usr/bin/python3.x'
+    We would like to keep the origin symlink ;)
+    """
+    if not isinstance(path, Path):
+        path = Path(path)
+
+    if path.is_symlink():
+        path = path.absolute()
+    else:
+        path = path.resolve(strict=True)
+
+    return path
+
+
 def make_relative_path(path, relative_to):
     """
     Makes {path} relative to {relative_to}, if possible.
     """
-    assert isinstance(path, Path)
-    assert isinstance(relative_to, Path)
-
-    path = path.absolute()
-    relative_to = relative_to.absolute()
+    path = make_absolute_path(path=path)
+    relative_to = make_absolute_path(path=relative_to)
 
     try:
         is_relative_to = path.is_relative_to(relative_to)
@@ -59,12 +71,11 @@ def _print_info(popenargs, *, cwd, kwargs):
     print()
     print('_' * 100)
 
-    command_str = argv2str(popenargs)
-
-    if ' ' in command_str:
-        command, args = command_str.split(' ', 1)
+    if len(popenargs) > 1:
+        command, *args = popenargs
+        args = argv2str(args)
     else:
-        command = command_str
+        command = popenargs[0]
         args = ''
 
     command_path = make_relative_path(Path(command), relative_to=cwd)
@@ -97,15 +108,12 @@ def _print_info(popenargs, *, cwd, kwargs):
 
 
 def prepare_popenargs(popenargs, cwd=None):
-    popenargs = [str(part) for part in popenargs]  # e.g.: Path() instance -> str
-
     if cwd is None:
         cwd = Path.cwd()
     else:
         assert_is_dir(cwd)
 
     command_path = Path(popenargs[0])
-
     if not command_path.is_file():
         # Lookup in current venv bin path first:
         bin_path = str(Path(sys.executable).parent.absolute())
@@ -116,7 +124,10 @@ def prepare_popenargs(popenargs, cwd=None):
             if not command:
                 raise FileNotFoundError(f'Command "{popenargs[0]}" not found in PATH!')
 
+        command = make_absolute_path(path=command)
+
         # Replace command name with full path:
+        popenargs = list(popenargs)
         popenargs[0] = command
 
     return popenargs, cwd
@@ -142,7 +153,7 @@ def verbose_check_call(
 
     try:
         return subprocess.check_call(
-            popenargs,
+            [str(part) for part in popenargs],  # e.g.: Path() instance -> str,
             universal_newlines=True,
             env=env,
             cwd=cwd,
@@ -170,7 +181,7 @@ def verbose_check_output(*popenargs, verbose=True, cwd=None, extra_env=None, **k
 
     try:
         output = subprocess.check_output(
-            popenargs,
+            [str(part) for part in popenargs],  # e.g.: Path() instance -> str,
             universal_newlines=True,
             env=env,
             cwd=cwd,
