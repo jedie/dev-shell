@@ -4,8 +4,6 @@ from unittest import mock
 
 from cmd2.ansi import strip_style
 
-from dev_shell.utils.subprocess_utils import argv2str
-
 
 def call_mocked_subprocess(func_name, func, *args, catch_sys_exit=False, **kwargs):
     with mock.patch(f'subprocess.{func_name}') as cm:
@@ -24,7 +22,7 @@ def call_mocked_subprocess(func_name, func, *args, catch_sys_exit=False, **kwarg
             if isinstance(popenargs, str):
                 command_str = popenargs
             else:
-                command_str = argv2str(popenargs)
+                command_str = ' '.join(popenargs)
 
             cwd = kwargs.get('cwd')
             if cwd:
