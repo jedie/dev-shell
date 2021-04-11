@@ -1,6 +1,7 @@
 from unittest.case import TestCase
 
 from cmd2 import CommandResult
+from cmd2.ansi import strip_style
 from cmd2_ext_test import ExternalTestMixin
 
 from dev_shell.dev_shell_app import DevShellApp, get_devshell_app_kwargs
@@ -26,7 +27,7 @@ class CmdAppBaseTestCase(TestCase):
         super().tearDown()
         self.app.fixture_teardown()
 
-    def execute(self, command):
+    def execute(self, command, remove_colors=True):
         out = self.app.app_cmd(command)
 
         assert isinstance(out, CommandResult)
@@ -34,11 +35,15 @@ class CmdAppBaseTestCase(TestCase):
             stdout = ''
         else:
             stdout = str(out.stdout)
+            if remove_colors:
+                stdout = strip_style(stdout)
 
         if out.stderr is None:
             stderr = ''
         else:
             stderr = str(out.stderr)
+            if remove_colors:
+                stderr = strip_style(stderr)
 
         return stdout, stderr
 

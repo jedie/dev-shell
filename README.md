@@ -47,18 +47,17 @@ Package operations: 31 installs, 1 update, 0 removals
 Installing the current project: dev-shell (0.0.1alpha0)
 
 
-Developer shell - dev_shell - v0.0.1alpha0
++ .venv/bin/python .venv/bin/devshell
+
+
+Developer shell - dev_shell - v0.2.0rc1
 
 
 Documented commands (use 'help -v' for verbose/'help <topic>' for details):
 
-Publish
-=======
-publish
-
-Tests
-=====
-pytest
+dev-shell commands
+==================
+fix_code_style  linting  list_venv_packages  publish  pytest  update
 
 ...
 
@@ -71,7 +70,7 @@ The first bootstrap start takes a few seconds. Each later startup detects the ex
 ```bash
 ~/dev-shell$ ./devshell.py
 
-Developer shell - dev_shell - v0.0.1alpha0
+Developer shell - dev_shell - v0.2.0rc1
 
 (dev_shell) help
 ```
@@ -86,6 +85,8 @@ A call with `--update` will force to call some create/update steps, e.g.:
 
 You can also just delete `/.venv/` and start `devshell.py` again ;)
 
+(Using `--update` is not to be confused with the call of "update" command.)
+
 
 ## compatibility
 
@@ -97,9 +98,14 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.1.0...master)
-  * Remove "path" argument from flynt and autopep8 (So it's usable in external project, too.)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.0...main)
   * TBC
+* [v0.2.0 - 2021-04-11](https://github.com/jedie/dev-shell/compare/v0.1.0...v0.2.0)
+  * Rename: "dev-shell.py => devshell.py" because of better autocomplete
+  * Add `DevShellConfig.base_path` and use it in own commands like, `pytest`, `linting` etc. (So they are usable in external project, too.)
+  * recognize "--update" and "--help" arguments better in `./devshell.py` calls.
+  * Update `setuptools` on `.venv` creation, too.
+  * Fix Bugs/tests under Windows
 * [v0.1.0 - 2021-03-22](https://github.com/jedie/dev-shell/compare/v0.0.2...v0.1.0)
   * Fix CI usage: Exit with correct return code if tests failed
   * Better "run as CLI" implementation via new `run_cmd2_app()`

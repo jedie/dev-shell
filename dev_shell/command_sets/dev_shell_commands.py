@@ -1,7 +1,11 @@
+import sys
+from pathlib import Path
+
 import cmd2
 from poetry_publish.publish import poetry_publish
 
 from dev_shell.command_sets import DevShellBaseCommandSet
+from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
 
 
@@ -40,6 +44,20 @@ class DevShellCommandSet(DevShellBaseCommandSet):
             cwd=self.config.base_path,
             exit_on_error=True
         )
+
+    def do_update(self, statement: cmd2.Statement):
+        """
+        Call "poetry update" to update all dependencies in .venv
+        """
+        verbose_check_call(
+            'poetry', 'update',
+            *statement.arg_list,
+            cwd=self.config.base_path,
+            exit_on_error=True
+        )
+        script_name = Path(sys.argv[0]).name
+        print(bright_green(f'\n\nPlease restart "{script_name}" !\n'))
+        sys.exit(0)  # Stop cmd
 
     def do_linting(self, statement: cmd2.Statement):
         """
