@@ -98,9 +98,9 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.0...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.0rc2...main)
   * TBC
-* [v0.2.0 - 2021-04-11](https://github.com/jedie/dev-shell/compare/v0.1.0...v0.2.0)
+* [v0.2.0rc2 - 2021-04-11](https://github.com/jedie/dev-shell/compare/v0.1.0...v0.2.0rc2)
   * Rename: "dev-shell.py => devshell.py" because of better autocomplete
   * Add `DevShellConfig.base_path` and use it in own commands like, `pytest`, `linting` etc. (So they are usable in external project, too.)
   * recognize "--update" and "--help" arguments better in `./devshell.py` calls.

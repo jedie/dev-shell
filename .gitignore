@@ -1,5 +1,6 @@
 .*
 !.github
+!.flake8
 !.gitignore
 __pycache__
 

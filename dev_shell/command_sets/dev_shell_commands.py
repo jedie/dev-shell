@@ -15,8 +15,6 @@ def run_linters(cwd=None):
     """
     verbose_check_call(
         'flake8',
-        '--exclude=.git,__pycache__,.tox,.venv',
-        '--max-line-length=119',
         cwd=cwd,
         exit_on_error=True
     )
