@@ -99,6 +99,7 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 ## History
 
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.0...main)
+  * Handle if "poetry-publish" is not installed, so a project that used "dev-shell" must not install it.
   * TBC
 * [v0.2.0 - 2021-04-11](https://github.com/jedie/dev-shell/compare/v0.1.0...v0.2.0)
   * Rename: "dev-shell.py => devshell.py" because of better autocomplete

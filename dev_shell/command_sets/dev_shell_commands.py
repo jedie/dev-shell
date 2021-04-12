@@ -2,7 +2,6 @@ import sys
 from pathlib import Path
 
 import cmd2
-from poetry_publish.publish import poetry_publish
 
 from dev_shell.command_sets import DevShellBaseCommandSet
 from dev_shell.utils.colorful import bright_green
@@ -32,6 +31,10 @@ def run_linters(cwd=None):
 
 @cmd2.with_default_category('dev-shell commands')
 class DevShellCommandSet(DevShellBaseCommandSet):
+    """
+    This command set may be used in external project, too.
+    """
+
     def do_pytest(self, statement: cmd2.Statement):
         """
         Run dev-shell tests via pytest
@@ -93,6 +96,10 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Publish "dev-shell" to PyPi
         """
+        # Maybe a project that use dev-shell doesn't use poetry-publish, too!
+        # So import it here to make this dependency "optional"
+        from poetry_publish.publish import poetry_publish  # noqa
+
         # Don't publish if test failed or code linting wrong:
         verbose_check_call(
             'pytest', '-x',
@@ -105,3 +112,11 @@ class DevShellCommandSet(DevShellBaseCommandSet):
             package_root=self.config.base_path,
             version=self.config.version,
         )
+
+
+# Maybe a project that use dev-shell doesn't use poetry-publish:
+try:
+    import poetry_publish  # noqa
+except ModuleNotFoundError:
+    # Remove the "publish" command
+    del DevShellCommandSet.do_publish
