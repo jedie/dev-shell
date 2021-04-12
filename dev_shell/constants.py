@@ -15,3 +15,7 @@ VENV_PATH = BASE_PATH / '.venv'
 
 BIN_PATH = VENV_PATH / BIN_NAME
 assert BIN_PATH.is_dir()
+
+
+# The source file path for external projects:
+BOOTSTRAP_SOURCE_FILE = BASE_PATH / 'dev_shell' / 'bootstrap-source.py'
