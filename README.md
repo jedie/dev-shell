@@ -98,9 +98,10 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.0...main)
-  * Handle if "poetry-publish" is not installed, so a project that used "dev-shell" must not install it.
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.1...main)
   * TBC
+* [v0.2.1 - 2021-04-12](https://github.com/jedie/dev-shell/compare/v0.2.0...v0.2.1)
+  * Handle if "poetry-publish" is not installed, so a project that used "dev-shell" must not install it.
 * [v0.2.0 - 2021-04-11](https://github.com/jedie/dev-shell/compare/v0.1.0...v0.2.0)
   * Rename: "dev-shell.py => devshell.py" because of better autocomplete
   * Add `DevShellConfig.base_path` and use it in own commands like, `pytest`, `linting` etc. (So they are usable in external project, too.)
