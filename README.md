@@ -98,8 +98,10 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.1...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.2...main)
   * TBC
+* [v0.2.2 - 2021-04-13](https://github.com/jedie/dev-shell/compare/v0.2.1...v0.2.2)
+  * Include bootstrap file, to it's possible to use it in external projects, too.
 * [v0.2.1 - 2021-04-12](https://github.com/jedie/dev-shell/compare/v0.2.0...v0.2.1)
   * Handle if "poetry-publish" is not installed, so a project that used "dev-shell" must not install it.
 * [v0.2.0 - 2021-04-11](https://github.com/jedie/dev-shell/compare/v0.1.0...v0.2.0)
