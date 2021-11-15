@@ -8,7 +8,7 @@ from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
 
 
-def run_linters(cwd=None):
+def run_linters(cwd=None, flynt_args=None):
     """
     Run code formatters and linter
     """
@@ -22,8 +22,11 @@ def run_linters(cwd=None):
         cwd=cwd,
         exit_on_error=True
     )
+
+    if flynt_args is None:
+        flynt_args = ('--fail-on-change', '--line_length=119')
     verbose_check_call(
-        'flynt', '--fail-on-change', '--line_length=119', '.',
+        'flynt', *flynt_args, '.',
         cwd=cwd,
         exit_on_error=True
     )
@@ -34,6 +37,9 @@ class DevShellCommandSet(DevShellBaseCommandSet):
     """
     This command set may be used in external project, too.
     """
+    # Overwrite flynt call args, because it has no support for config files.
+    # See: https://github.com/ikamensh/flynt/issues/111
+    flynt_args = None  # None == use defaults in run_linters()
 
     def do_pytest(self, statement: cmd2.Statement):
         """
@@ -64,7 +70,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Linting: Check code style with flake8, isort and flynt
         """
-        run_linters(cwd=self.config.base_path)
+        run_linters(cwd=self.config.base_path, flynt_args=self.flynt_args)
 
     def do_fix_code_style(self, statement: cmd2.Statement):
         """
