@@ -7,6 +7,7 @@ import pytest
 from cmd2 import CommandResult
 
 import dev_shell
+from dev_shell.command_sets.dev_shell_commands import DevShellCommandSet
 from dev_shell.tests.fixtures import DevShellAppBaseTestCase
 from dev_shell.tests.utils import call_mocked_subprocess
 from dev_shell.utils.assertion import assert_is_file
@@ -68,8 +69,45 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
         finally:
             sys.argv = origin_sys_argv
 
-    def test_linting(self):
-        subprocess.check_call([sys.executable, str(OWN_DEV_SHELL_PATH), 'linting'])
+    def test_do_linting(self):
+        with patch.object(subprocess, 'check_call') as check_call_mock:
+            stdout, stderr = self.execute(command='linting')
+
+        assert stderr == ''
+
+        # The call will be printed:
+        if sys.platform == 'win32':
+            assert '+ .venv\\Scripts\\flake8.exe\n' in stdout
+            assert '+ .venv\\Scripts\\isort.exe --check-only .\n' in stdout
+            assert '+ .venv\\Scripts\\flynt.exe --fail-on-change --line_length=119 .\n' in stdout
+        else:
+            assert '+ .venv/bin/flake8\n' in stdout
+            assert '+ .venv/bin/isort --check-only .\n' in stdout
+            assert '+ .venv/bin/flynt --fail-on-change --line_length=119 .\n' in stdout
+
+        check_call_mock.assert_called()
+
+        # Test if DevShellCommandSet.flynt_args passed to flynt call:
+
+        with patch.object(subprocess, 'check_call'):
+            command_sets = self.app._installed_command_sets
+            assert len(command_sets) == 1
+
+            dev_shell_command_set = list(command_sets)[0]
+            assert isinstance(dev_shell_command_set, DevShellCommandSet)
+            assert dev_shell_command_set.flynt_args is None
+
+            dev_shell_command_set.flynt_args = ('--foo', '--bar')
+
+            stdout, stderr = self.execute(command='linting')
+
+        assert stderr == ''
+
+        # Changed args passed?
+        if sys.platform == 'win32':
+            assert '+ .venv\\Scripts\\flynt.exe --foo --bar .\n' in stdout
+        else:
+            assert '+ .venv/bin/flynt --foo --bar .\n' in stdout
 
     def test_return_code(self):
         """
