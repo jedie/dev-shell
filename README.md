@@ -98,8 +98,11 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.2...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.3...main)
   * TBC
+* [v0.2.3 - 2021-11-15](https://github.com/jedie/dev-shell/compare/v0.2.2...v0.2.3)
+  * Update requirements
+  * [Flynt arguments can be changes via CommandSet](https://github.com/jedie/dev-shell/issues/29)
 * [v0.2.2 - 2021-04-13](https://github.com/jedie/dev-shell/compare/v0.2.1...v0.2.2)
   * Include bootstrap file, to it's possible to use it in external projects, too.
 * [v0.2.1 - 2021-04-12](https://github.com/jedie/dev-shell/compare/v0.2.0...v0.2.1)

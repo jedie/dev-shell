@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.2.2"
+version = "0.2.3"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
