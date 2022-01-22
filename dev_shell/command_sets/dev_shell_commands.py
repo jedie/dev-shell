@@ -12,24 +12,15 @@ def run_linters(cwd=None, flynt_args=None):
     """
     Run code formatters and linter
     """
-    verbose_check_call(
-        'flake8',
-        cwd=cwd,
-        exit_on_error=True
-    )
-    verbose_check_call(
-        'isort', '--check-only', '.',
-        cwd=cwd,
-        exit_on_error=True
-    )
-
     if flynt_args is None:
-        flynt_args = ('--fail-on-change', '--line_length=119')
-    verbose_check_call(
-        'flynt', *flynt_args, '.',
-        cwd=cwd,
-        exit_on_error=True
-    )
+        flynt_args = ('--fail-on-change',)
+    verbose_check_call('flynt', *flynt_args, '.', cwd=cwd, exit_on_error=True)
+    verbose_check_call('darker', '--diff', '--check', cwd=cwd)
+
+
+def run_fix_code_style(cwd=None):
+    verbose_check_call('flynt', '.', cwd=cwd)
+    verbose_check_call('darker', cwd=cwd)
 
 
 @cmd2.with_default_category('dev-shell commands')
@@ -76,18 +67,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Fix code style by running: flynt, autopep8 and isort
         """
-        verbose_check_call(
-            'flynt', '--line_length=119', '.',
-            cwd=self.config.base_path
-        )
-        verbose_check_call(
-            'autopep8', '--aggressive', '--aggressive', '--in-place', '--recursive', '.',
-            cwd=self.config.base_path
-        )
-        verbose_check_call(
-            'isort', '.',
-            cwd=self.config.base_path
-        )
+        run_fix_code_style(cwd=self.config.base_path)
 
     def do_list_venv_packages(self, statement: cmd2.Statement):
         """

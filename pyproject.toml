@@ -27,16 +27,38 @@ isort = "*"
 cmd2_ext_test = "*"
 flake8 = "*"
 flynt = "*"
-autopep8 = "*"
 pytest = "*"
 pytest-randomly = "*"
 pytest-cov = "*"
+pytest-darker = "*"  # https://github.com/akaihola/pytest-darker
+pytest-flake8 = "*"
+pytest-isort = "*"
+# TODO: pytest-mypy = "*"
 tox = "*"
-
+darker = "*"  # https://github.com/akaihola/darker
+black = "==21.12b0" # https://github.com/akaihola/darker/issues/264
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.darker]
+src = ['.']
+revision = "origin/main..."
+line_length = 120
+verbose = true
+skip_string_normalization = true
+diff = false
+check = false
+stdout = false
+isort = true
+lint = [
+    "flake8",
+]
+log_level = "INFO"
+
+[tool.flynt]
+line_length = 120
 
 
 [tool.isort]
@@ -76,11 +98,15 @@ addopts = """
     --cov-report xml
     --no-cov-on-fail
     --showlocals
+    --darker
+    --flake8
+    --isort
     --doctest-modules
     --failed-first
     --last-failed-no-failures all
     --new-first
 """
+# TODO: --mypy
 
 
 [tool.tox]
