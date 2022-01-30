@@ -73,17 +73,18 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
         with patch.object(subprocess, 'check_call') as check_call_mock:
             stdout, stderr = self.execute(command='linting')
 
+        print(stdout)
+        print(stderr)
+
         assert stderr == ''
 
         # The call will be printed:
         if sys.platform == 'win32':
-            assert '+ .venv\\Scripts\\flake8.exe\n' in stdout
-            assert '+ .venv\\Scripts\\isort.exe --check-only .\n' in stdout
-            assert '+ .venv\\Scripts\\flynt.exe --fail-on-change --line_length=119 .\n' in stdout
+            assert '+ .venv\\Scripts\\flynt.exe --fail-on-change .\n' in stdout
+            assert '+ .venv\\Scripts\\darker.exe --diff --check\n' in stdout
         else:
-            assert '+ .venv/bin/flake8\n' in stdout
-            assert '+ .venv/bin/isort --check-only .\n' in stdout
-            assert '+ .venv/bin/flynt --fail-on-change --line_length=119 .\n' in stdout
+            assert '+ .venv/bin/flynt --fail-on-change .\n' in stdout
+            assert '+ .venv/bin/darker --diff --check\n' in stdout
 
         check_call_mock.assert_called()
 
