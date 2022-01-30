@@ -7,7 +7,6 @@ import pytest
 from cmd2 import CommandResult
 
 import dev_shell
-from dev_shell.command_sets.dev_shell_commands import DevShellCommandSet
 from dev_shell.tests.fixtures import DevShellAppBaseTestCase
 from dev_shell.tests.utils import call_mocked_subprocess
 from dev_shell.utils.assertion import assert_is_file
@@ -80,35 +79,30 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
 
         # The call will be printed:
         if sys.platform == 'win32':
-            assert '+ .venv\\Scripts\\flynt.exe --fail-on-change .\n' in stdout
             assert '+ .venv\\Scripts\\darker.exe --diff --check\n' in stdout
+            assert '+ .venv\\Scripts\\flake8.exe\n' in stdout
         else:
-            assert '+ .venv/bin/flynt --fail-on-change .\n' in stdout
             assert '+ .venv/bin/darker --diff --check\n' in stdout
+            assert '+ .venv/bin/flake8\n' in stdout
 
         check_call_mock.assert_called()
 
-        # Test if DevShellCommandSet.flynt_args passed to flynt call:
+    def test_fix_code_style(self):
+        with patch.object(subprocess, 'check_call') as check_call_mock:
+            stdout, stderr = self.execute(command='fix_code_style')
 
-        with patch.object(subprocess, 'check_call'):
-            command_sets = self.app._installed_command_sets
-            assert len(command_sets) == 1
-
-            dev_shell_command_set = list(command_sets)[0]
-            assert isinstance(dev_shell_command_set, DevShellCommandSet)
-            assert dev_shell_command_set.flynt_args is None
-
-            dev_shell_command_set.flynt_args = ('--foo', '--bar')
-
-            stdout, stderr = self.execute(command='linting')
+        print(stdout)
+        print(stderr)
 
         assert stderr == ''
 
-        # Changed args passed?
+        # The call will be printed:
         if sys.platform == 'win32':
-            assert '+ .venv\\Scripts\\flynt.exe --foo --bar .\n' in stdout
+            assert '+ .venv\\Scripts\\darker.exe\n' in stdout
         else:
-            assert '+ .venv/bin/flynt --foo --bar .\n' in stdout
+            assert '+ .venv/bin/darker\n' in stdout
+
+        check_call_mock.assert_called()
 
     def test_return_code(self):
         """

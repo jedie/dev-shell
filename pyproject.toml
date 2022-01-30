@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.2.4"
+version = "0.3.0"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
@@ -22,11 +22,10 @@ gnureadline = { version = "*", markers = "sys_platform == 'darwin'" }
 
 
 [tool.poetry.dev-dependencies]
+cmd2_ext_test = "*"
 poetry-publish = "*"  # https://github.com/jedie/poetry-publish
 isort = "*"
-cmd2_ext_test = "*"
 flake8 = "*"
-flynt = "*"
 pytest = "*"
 pytest-randomly = "*"
 pytest-cov = "*"
@@ -56,9 +55,6 @@ lint = [
     "flake8",
 ]
 log_level = "INFO"
-
-[tool.flynt]
-line_length = 120
 
 
 [tool.isort]
