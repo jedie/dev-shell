@@ -8,18 +8,15 @@ from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
 
 
-def run_linters(cwd=None, flynt_args=None):
+def run_linters(cwd=None):
     """
     Run code formatters and linter
     """
-    if flynt_args is None:
-        flynt_args = ('--fail-on-change',)
-    verbose_check_call('flynt', *flynt_args, '.', cwd=cwd, exit_on_error=True)
-    verbose_check_call('darker', '--diff', '--check', cwd=cwd)
+    verbose_check_call('darker', '--diff', '--check', cwd=cwd, exit_on_error=True)
+    verbose_check_call('flake8', cwd=cwd, exit_on_error=True)
 
 
 def run_fix_code_style(cwd=None):
-    verbose_check_call('flynt', '.', cwd=cwd)
     verbose_check_call('darker', cwd=cwd)
 
 
@@ -28,9 +25,6 @@ class DevShellCommandSet(DevShellBaseCommandSet):
     """
     This command set may be used in external project, too.
     """
-    # Overwrite flynt call args, because it has no support for config files.
-    # See: https://github.com/ikamensh/flynt/issues/111
-    flynt_args = None  # None == use defaults in run_linters()
 
     def do_pytest(self, statement: cmd2.Statement):
         """
@@ -59,13 +53,14 @@ class DevShellCommandSet(DevShellBaseCommandSet):
 
     def do_linting(self, statement: cmd2.Statement):
         """
-        Linting: Check code style with flake8, isort and flynt
+        Linting: Check code style with darker and flake8
         """
-        run_linters(cwd=self.config.base_path, flynt_args=self.flynt_args)
+        verbose_check_call('darker', '--diff', '--check', cwd=self.config.base_path)
+        verbose_check_call('flake8', cwd=self.config.base_path, exit_on_error=True)
 
     def do_fix_code_style(self, statement: cmd2.Statement):
         """
-        Fix code style by running: flynt, autopep8 and isort
+        Fix code style by running darker
         """
         run_fix_code_style(cwd=self.config.base_path)
 

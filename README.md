@@ -98,8 +98,10 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.4...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.3.0...main)
   * TBC
+* [v0.3.0 - 2022-01-30](https://github.com/jedie/dev-shell/compare/v0.2.4...v0.3.0)
+  * Remove "flynt" form linting/fix code style
 * [v0.2.4 - 2022-01-30](https://github.com/jedie/dev-shell/compare/v0.2.3...v0.2.4)
   * Update requirements
   * Use darker as code formatter and pytest-darker for linting
