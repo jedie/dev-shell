@@ -98,8 +98,11 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.3...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.2.4...main)
   * TBC
+* [v0.2.4 - 2022-01-30](https://github.com/jedie/dev-shell/compare/v0.2.3...v0.2.4)
+  * Update requirements
+  * Use darker as code formatter and pytest-darker for linting
 * [v0.2.3 - 2021-11-15](https://github.com/jedie/dev-shell/compare/v0.2.2...v0.2.3)
   * Update requirements
   * [Flynt arguments can be changes via CommandSet](https://github.com/jedie/dev-shell/issues/29)
