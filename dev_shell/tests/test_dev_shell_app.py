@@ -127,6 +127,9 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
 
         # Do something that normally should never fail:
         p = call_pytest('--version')
-        assert p.stderr == f'pytest {pytest.__version__}\n'
-        assert 'finished with exit code' not in p.stdout
+        stderr = p.stderr
+        stdout = p.stdout
+        assert f'pytest {pytest.__version__}\n' in stdout
+        assert 'finished with exit code' not in stdout
         assert p.returncode == 0
+        assert stderr == ''
