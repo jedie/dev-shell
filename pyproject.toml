@@ -35,14 +35,13 @@ pytest-isort = "*"
 # TODO: pytest-mypy = "*"
 tox = "*"
 darker = "*"  # https://github.com/akaihola/darker
-black = "==21.12b0" # https://github.com/akaihola/darker/issues/264
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.darker]
-src = ['.']
+src = ['.',]
 revision = "origin/main..."
 line_length = 120
 verbose = true
