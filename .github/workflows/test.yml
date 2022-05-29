@@ -43,7 +43,7 @@ jobs:
 
     - name: 'Run tests with Python v${{ matrix.python-version }}'
       run: |
-        python3 devshell.py pytest -vv
+        python3 devshell.py tox -e python
 
     - name: 'Upload coverage report'
       if: matrix.os == 'ubuntu-latest'
