@@ -59,14 +59,10 @@ log_level = "INFO"
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/config_files/#pyprojecttoml-preferred-format
 atomic=true
+known_first_party=["dev_shell"]
+profile='black'
 line_length=100
-case_sensitive=false
-skip_glob=["*/htmlcov/*",]
-multi_line_output=3
-include_trailing_comma=true
-no_lines_before="LOCALFOLDER"
-default_section="THIRDPARTY"
-sections=["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+skip_glob=["*/htmlcov/*"]
 lines_after_imports=2
 
 
