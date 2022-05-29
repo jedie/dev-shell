@@ -11,7 +11,13 @@ from unittest import TestCase, mock
 
 import devshell
 from dev_shell.constants import VENV_PATH
-from dev_shell.tests.constants import DEVSHELL_CALL, VENV_DEVSHELL, VENV_PIP, VENV_POETRY, VENV_PYTHON
+from dev_shell.tests.constants import (
+    DEVSHELL_CALL,
+    VENV_DEVSHELL,
+    VENV_PIP,
+    VENV_POETRY,
+    VENV_PYTHON,
+)
 from dev_shell.tests.utils import call_mocked_subprocess
 from dev_shell.utils.assertion import assert_is_dir, assert_is_file
 

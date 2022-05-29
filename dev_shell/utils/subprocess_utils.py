@@ -7,7 +7,15 @@ import sys
 from pathlib import Path
 
 from dev_shell.utils.assertion import assert_is_dir
-from dev_shell.utils.colorful import blue, bright_blue, bright_white, bright_yellow, cyan, green, print_error
+from dev_shell.utils.colorful import (
+    blue,
+    bright_blue,
+    bright_white,
+    bright_yellow,
+    cyan,
+    green,
+    print_error,
+)
 
 
 def argv2str(argv):

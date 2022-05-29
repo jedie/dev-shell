@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.4.0"
+version = "0.5.0.rc1"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
@@ -43,7 +43,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.darker]
 src = ['.',]
 revision = "origin/main..."
-line_length = 120
+line_length = 100
 verbose = true
 skip_string_normalization = true
 diff = false
@@ -59,14 +59,10 @@ log_level = "INFO"
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/config_files/#pyprojecttoml-preferred-format
 atomic=true
-line_length=120
-case_sensitive=false
-skip_glob=["*/htmlcov/*",]
-multi_line_output=3
-include_trailing_comma=true
-no_lines_before="LOCALFOLDER"
-default_section="THIRDPARTY"
-sections=["FUTURE","STDLIB","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+known_first_party=["dev_shell"]
+profile='black'
+line_length=100
+skip_glob=["*/htmlcov/*"]
 lines_after_imports=2
 
 
@@ -105,16 +101,16 @@ addopts = """
 
 
 [tool.tox]
-# https://tox.readthedocs.io/en/latest/example/basic.html#pyproject-toml-tox-legacy-ini
+# https://tox.wiki/en/latest/example/basic.html#pyproject-toml-tox-legacy-ini
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py39,py38,py37
+envlist = py{37,38,39,310}
 skip_missing_interpreters = True
 
 [testenv]
 passenv = *
-whitelist_externals = pytest
 commands =
-    pytest
+    python --version
+    python devshell.py pytest
 """
