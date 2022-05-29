@@ -105,7 +105,7 @@ addopts = """
 
 
 [tool.tox]
-# https://tox.readthedocs.io/en/latest/example/basic.html#pyproject-toml-tox-legacy-ini
+# https://tox.wiki/en/latest/example/basic.html#pyproject-toml-tox-legacy-ini
 legacy_tox_ini = """
 [tox]
 isolated_build = True
@@ -114,7 +114,7 @@ skip_missing_interpreters = True
 
 [testenv]
 passenv = *
-whitelist_externals = pytest
 commands =
-    pytest
+    python --version
+    python devshell.py pytest
 """
