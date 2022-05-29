@@ -31,10 +31,23 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         Run dev-shell tests via pytest
         """
         verbose_check_call(
-            'pytest',
-            *statement.arg_list,
-            cwd=self.config.base_path,
-            exit_on_error=True
+            'pytest', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
+        )
+
+    def do_tox(self, statement: cmd2.Statement):
+        """
+        Call tox and pass all given arguments to it.
+        """
+        verbose_check_call(
+            'tox', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
+        )
+
+    def do_poetry(self, statement: cmd2.Statement):
+        """
+        Call poetry and pass all given arguments to it.
+        """
+        verbose_check_call(
+            'poetry', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
         )
 
     def do_update(self, statement: cmd2.Statement):
