@@ -3,9 +3,9 @@
 [![pytest](https://github.com/jedie/dev-shell/actions/workflows/test.yml/badge.svg?branch=main)](https://github.com/jedie/dev-shell/actions?query=branch%3Amain)
 [![codecov](https://codecov.io/gh/jedie/dev-shell/branch/main/graph/badge.svg)](https://codecov.io/gh/jedie/dev-shell)
 
-![ddev-shell @ PyPi](https://img.shields.io/pypi/v/django-fmd?label=dev-shell%20%40%20PyPi)
+[![ddev-shell @ PyPi](https://img.shields.io/pypi/v/django-fmd?label=dev-shell%20%40%20PyPi)
 ![Python Versions](https://img.shields.io/pypi/pyversions/dev-shell)
-![License GPL V3+](https://img.shields.io/pypi/l/dev-shell)
+![License GPL V3+](https://img.shields.io/pypi/l/dev-shell)](https://pypi.org/project/dev-shell/)
 
 This small project is intended to improve the start-up for collaborators.
 
