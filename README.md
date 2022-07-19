@@ -101,7 +101,7 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.5.0...main)
   * TBC
 * [0.5.0.rc1 - 2022-05-29](https://github.com/jedie/dev-shell/compare/v0.4.0...v0.5.0)
-  * Add "tox" and "poetry" commands to call them installed in created {{{.venv}}} 
+  * Add "tox" and "poetry" commands to call them installed in created ```.venv```
   * Update requirements
 * [v0.4.0 - 2022-02-28](https://github.com/jedie/dev-shell/compare/v0.3.0...v0.4.0)
   * Update to new cmd2, colorama and pytest versions
