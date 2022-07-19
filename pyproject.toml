@@ -80,7 +80,6 @@ norecursedirs = ".* .git __pycache__ conf coverage* dist htmlcov"
 #    --full-trace
 #    -p no:warnings
 addopts = """
-    --import-mode=importlib
     --cov=.
     --cov-report term-missing
     --cov-report html
