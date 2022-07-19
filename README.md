@@ -103,9 +103,9 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.6.0.rc1...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.6.0...main)
   * TBC
-* [0.6.0.rc1 - 2022-07-19](https://github.com/jedie/dev-shell/compare/v0.5.0...v0.6.0.rc1)
+* [0.6.0 - 2022-07-19](https://github.com/jedie/dev-shell/compare/v0.5.0...v0.6.0)
   * Add "pyupgrade" as shell command 
 * [0.5.0 - 2022-05-29](https://github.com/jedie/dev-shell/compare/v0.4.0...v0.5.0)
   * Add "tox" and "poetry" commands to call them installed in created ```.venv```
