@@ -68,24 +68,17 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
         finally:
             sys.argv = origin_sys_argv
 
-    def test_do_linting(self):
-        with patch.object(subprocess, 'check_call') as check_call_mock:
-            stdout, stderr = self.execute(command='linting')
+    def test_do_pyupgrade(self):
+        stdout, stderr = self.execute(command='pyupgrade')
 
         print(stdout)
         print(stderr)
 
         assert stderr == ''
 
-        # The call will be printed:
-        if sys.platform == 'win32':
-            assert '+ .venv\\Scripts\\darker.exe --diff --check\n' in stdout
-            assert '+ .venv\\Scripts\\flake8.exe\n' in stdout
-        else:
-            assert '+ .venv/bin/darker --diff --check\n' in stdout
-            assert '+ .venv/bin/flake8\n' in stdout
-
-        check_call_mock.assert_called()
+        assert 'Run PyUpgrade' in stdout
+        assert '(min version: 3.7)' in stdout
+        assert '0 have been updated' in stdout
 
     def test_fix_code_style(self):
         with patch.object(subprocess, 'check_call') as check_call_mock:

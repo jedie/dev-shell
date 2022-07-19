@@ -94,17 +94,20 @@ You can also just delete `/.venv/` and start `devshell.py` again ;)
 
 ## compatibility
 
-| dev-shell version | OS                      | Python version |
-|-------------------|-------------------------|----------------|
-| >=v0.0.1          | Linux + MacOS + Windows | 3.9, 3.8, 3.7  |
+| dev-shell version | OS                      | Python version      |
+|-------------------|-------------------------|---------------------|
+| >=v0.5.0          | Linux + MacOS + Windows | 3.10, 3.9, 3.8, 3.7 |
+| >=v0.0.1          | Linux + MacOS + Windows | 3.9, 3.8, 3.7       |
 
 See also github test configuration: [.github/workflows/test.yml](https://github.com/jedie/dev-shell/blob/main/.github/workflows/test.yml)
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.5.0...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.6.0.rc1...main)
   * TBC
-* [0.5.0.rc1 - 2022-05-29](https://github.com/jedie/dev-shell/compare/v0.4.0...v0.5.0)
+* [0.6.0.rc1 - 2022-07-19](https://github.com/jedie/dev-shell/compare/v0.5.0...v0.6.0.rc1)
+  * Add "pyupgrade" as shell command 
+* [0.5.0 - 2022-05-29](https://github.com/jedie/dev-shell/compare/v0.4.0...v0.5.0)
   * Add "tox" and "poetry" commands to call them installed in created ```.venv```
   * Update requirements
 * [v0.4.0 - 2022-02-28](https://github.com/jedie/dev-shell/compare/v0.3.0...v0.4.0)

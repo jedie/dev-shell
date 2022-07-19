@@ -1,23 +1,13 @@
+import argparse
 import sys
 from pathlib import Path
 
 import cmd2
+from cmd2 import Cmd2ArgumentParser, with_argparser
 
 from dev_shell.command_sets import DevShellBaseCommandSet
 from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
-
-
-def run_linters(cwd=None):
-    """
-    Run code formatters and linter
-    """
-    verbose_check_call('darker', '--diff', '--check', cwd=cwd, exit_on_error=True)
-    verbose_check_call('flake8', cwd=cwd, exit_on_error=True)
-
-
-def run_fix_code_style(cwd=None):
-    verbose_check_call('darker', cwd=cwd)
 
 
 @cmd2.with_default_category('dev-shell commands')
@@ -25,6 +15,47 @@ class DevShellCommandSet(DevShellBaseCommandSet):
     """
     This command set may be used in external project, too.
     """
+
+    MIN_PY_MAJOR_VERSION = 3
+    MIN_PY_MINOR_VERSION = 7
+
+    pyupgrade_argparser = Cmd2ArgumentParser()
+    pyupgrade_argparser.add_argument('--exit-zero-even-if-changed', action='store_true')
+    pyupgrade_argparser.add_argument('--keep-percent-format', action='store_true')
+    pyupgrade_argparser.add_argument('--keep-mock', action='store_true')
+    pyupgrade_argparser.add_argument('--keep-runtime-typing', action='store_true')
+    pyupgrade_argparser.add_argument(
+        '--major-version', dest='major', action='store_const', const=3, default=MIN_PY_MAJOR_VERSION
+    )
+    pyupgrade_argparser.add_argument(
+        '--minor-version', dest='minor', action='store_const', const=7, default=MIN_PY_MINOR_VERSION
+    )
+
+    @with_argparser(pyupgrade_argparser)
+    def do_pyupgrade(self, args: argparse.Namespace):
+        """
+        Run pyupgrade
+        """
+        base_path = self.config.base_path
+        print(f'Run PyUpgrade over "{base_path}" (min version: {args.major}.{args.minor})')
+        args.min_version = (args.major, args.minor)
+
+        from pyupgrade._main import _fix_file
+
+        total_count = 0
+        change_count = 0
+
+        for file_path in base_path.glob('**/*.py'):
+            rel_path = file_path.relative_to(base_path)
+            dir_name = rel_path.parts[0]
+            if dir_name.startswith('.'):
+                continue
+
+            total_count += 1
+            changed = _fix_file(filename=file_path, args=args)
+            if changed:
+                change_count += 1
+        print(f'Out of {total_count} files, {change_count} have been updated.')
 
     def do_pytest(self, statement: cmd2.Statement):
         """
@@ -64,18 +95,11 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         print(bright_green(f'\n\nPlease restart "{script_name}" !\n'))
         sys.exit(0)  # Stop cmd
 
-    def do_linting(self, statement: cmd2.Statement):
-        """
-        Linting: Check code style with darker and flake8
-        """
-        verbose_check_call('darker', '--diff', '--check', cwd=self.config.base_path)
-        verbose_check_call('flake8', cwd=self.config.base_path, exit_on_error=True)
-
     def do_fix_code_style(self, statement: cmd2.Statement):
         """
         Fix code style by running darker
         """
-        run_fix_code_style(cwd=self.config.base_path)
+        verbose_check_call('darker', cwd=self.config.base_path)
 
     def do_list_venv_packages(self, statement: cmd2.Statement):
         """
@@ -95,12 +119,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         from poetry_publish.publish import poetry_publish  # noqa
 
         # Don't publish if test failed or code linting wrong:
-        verbose_check_call(
-            'pytest', '-x',
-            cwd=self.config.base_path,
-            exit_on_error=True,
-        )
-        run_linters(cwd=self.config.base_path)
+        self.do_pytest(statement)
 
         poetry_publish(
             package_root=self.config.base_path,
