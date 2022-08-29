@@ -57,6 +57,14 @@ class DevShellCommandSet(DevShellBaseCommandSet):
                 change_count += 1
         print(f'Out of {total_count} files, {change_count} have been updated.')
 
+    def do_flake8(self, statement: cmd2.Statement):
+        """
+        Just run flake8
+        """
+        verbose_check_call(
+            'flake8', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
+        )
+
     def do_pytest(self, statement: cmd2.Statement):
         """
         Run dev-shell tests via pytest
