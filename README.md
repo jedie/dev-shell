@@ -11,11 +11,11 @@ This small project is intended to improve the start-up for collaborators.
 
 The idea is to make the project setup as simple as possible. Just clone the sources and start a script and you're done ;)
 
+Why in hell not just a `Makefile`? Because it doesn't out-of-the-box under Windows and MacOS, the dev-shell does ;) 
+
 Run Tests? Just start the script and call the "run test command".
 
-The "dev-shell" is the base to create a CLI and a shell. It also
-
-It also shows how to make a project bootstrap as simply as possible, e.g.:
+The "dev-shell" is the base to create a CLI and a shell. It also shows how to make a project bootstrap as simply as possible, e.g.:
 
 ```bash
 ~$ git clone https://github.com/jedie/dev-shell.git
