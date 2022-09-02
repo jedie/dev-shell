@@ -58,11 +58,11 @@ class DevShellAppTestCase(DevShellAppBaseTestCase):
 
             assert len(check_calls) == 1
             if sys.platform == 'win32':
-                assert check_calls[0].endswith(r'.venv\Scripts\poetry.exe update')
-                assert '\n+ .venv\\Scripts\\poetry.exe update\n' in stdout
+                assert check_calls[0].endswith(r'.venv\Scripts\poetry.exe update -v')
+                assert '\n+ .venv\\Scripts\\poetry.exe update -v\n' in stdout
             else:
-                assert check_calls[0].endswith('.venv/bin/poetry update')
-                assert '\n+ .venv/bin/poetry update\n' in stdout
+                assert check_calls[0].endswith('.venv/bin/poetry update -v')
+                assert '\n+ .venv/bin/poetry update -v\n' in stdout
 
             assert '\nPlease restart "TheDevScript.py" !\n' in stdout
         finally:
