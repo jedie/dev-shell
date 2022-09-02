@@ -103,10 +103,14 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.6.0...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v.6.1...main)
   * TBC
+* [0.6.1 - 2022-09-02](https://github.com/jedie/dev-shell/compare/v0.6.0...v0.6.1)
+  * Set default subprocess timeout to 5 Min.
+  * Skip buggy Poetry v1.2.0
+  * Update requirements
 * [0.6.0 - 2022-07-19](https://github.com/jedie/dev-shell/compare/v0.5.0...v0.6.0)
-  * Add "pyupgrade" as shell command 
+  * Add "pyupgrade" as shell command
 * [0.5.0 - 2022-05-29](https://github.com/jedie/dev-shell/compare/v0.4.0...v0.5.0)
   * Add "tox" and "poetry" commands to call them installed in created ```.venv```
   * Update requirements

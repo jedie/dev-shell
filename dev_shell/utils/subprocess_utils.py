@@ -18,6 +18,9 @@ from dev_shell.utils.colorful import (
 )
 
 
+DEFAULT_TIMEOUT = 5 * 60
+
+
 def argv2str(argv):
     """
     >>> argv2str(['foo', '--bar=123'])
@@ -142,13 +145,15 @@ def prepare_popenargs(popenargs, cwd=None):
 
 
 def verbose_check_call(
-        *popenargs,
-        verbose=True,
-        cwd=None,
-        extra_env=None,
-        exit_on_error=False,
-        **kwargs):
-    """ 'verbose' version of subprocess.check_call() """
+    *popenargs,
+    verbose=True,
+    cwd=None,
+    extra_env=None,
+    exit_on_error=False,
+    timeout=DEFAULT_TIMEOUT,
+    **kwargs,
+):
+    """'verbose' version of subprocess.check_call()"""
 
     popenargs, cwd = prepare_popenargs(popenargs, cwd=cwd)
 
@@ -162,9 +167,10 @@ def verbose_check_call(
     try:
         return subprocess.check_call(
             [str(part) for part in popenargs],  # e.g.: Path() instance -> str,
-            universal_newlines=True,
+            text=True,
             env=env,
             cwd=cwd,
+            timeout=timeout,
             **kwargs
         )
     except subprocess.CalledProcessError as err:
@@ -175,8 +181,10 @@ def verbose_check_call(
         raise
 
 
-def verbose_check_output(*popenargs, verbose=True, cwd=None, extra_env=None, **kwargs):
-    """ 'verbose' version of subprocess.check_output() """
+def verbose_check_output(
+    *popenargs, verbose=True, cwd=None, extra_env=None, timeout=DEFAULT_TIMEOUT, **kwargs
+):
+    """'verbose' version of subprocess.check_output()"""
 
     popenargs, cwd = prepare_popenargs(popenargs, cwd=cwd)
 
@@ -190,10 +198,11 @@ def verbose_check_output(*popenargs, verbose=True, cwd=None, extra_env=None, **k
     try:
         output = subprocess.check_output(
             [str(part) for part in popenargs],  # e.g.: Path() instance -> str,
-            universal_newlines=True,
+            text=True,
             env=env,
             cwd=cwd,
             stderr=subprocess.STDOUT,
+            timeout=timeout,
             **kwargs
         )
     except subprocess.CalledProcessError as err:
