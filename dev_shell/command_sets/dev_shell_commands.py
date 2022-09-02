@@ -86,7 +86,9 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         Call "poetry update" to update all dependencies in .venv
         """
         verbose_check_call(
-            'poetry', 'update',
+            'poetry',
+            'update',
+            '-v',
             *statement.arg_list,
             cwd=self.config.base_path,
             exit_on_error=True
