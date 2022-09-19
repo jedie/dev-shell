@@ -33,6 +33,15 @@ jobs:
       with:
         python-version: '${{ matrix.python-version }}'
 
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/
+        key: dot-cache-files
+
+    - name: 'pip cache information'
+      run: |
+        pip3 cache info
+
     - name: 'Bootstrap'
       run: |
         python3 devshell.py quit
@@ -44,11 +53,6 @@ jobs:
     - name: 'Run tests with Python v${{ matrix.python-version }}'
       run: |
         python3 devshell.py tox -e python
-
-    - name: 'Run linters'
-      if: matrix.python-version == '3.8'
-      run: |
-        python3 devshell.py linting
 
     - name: 'Upload coverage report'
       uses: codecov/codecov-action@v2
