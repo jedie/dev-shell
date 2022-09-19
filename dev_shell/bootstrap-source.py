@@ -49,18 +49,18 @@ VENV_PATH = BASE_PATH / '.venv'
 BIN_PATH = VENV_PATH / BIN_NAME
 PYTHON_PATH = BIN_PATH / f'python{FILE_EXT}'
 PIP_PATH = BIN_PATH / f'pip{FILE_EXT}'
-POETRY_PATH = BIN_PATH / f'poetry{FILE_EXT}'
+PIPENV_PATH = BIN_PATH / f'pipenv{FILE_EXT}'
 
-DEP_LOCK_PATH = BASE_PATH / 'poetry.lock'
+DEP_LOCK_PATH = BASE_PATH / 'Pipfile.lock'
 DEP_HASH_PATH = VENV_PATH / '.dep_hash'
 
-# script file defined in pyproject.toml as [tool.poetry.scripts]
+# script file defined in pyproject.toml as [tool.pipenv.scripts]
 # (Under Windows: ".exe" not added!)
 PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
 
 
 def get_dep_hash():
-    """ Get SHA512 hash from poetry.lock content. """
+    """Get SHA512 hash from Pipfile.lock content."""
     return hashlib.sha512(DEP_LOCK_PATH.read_bytes()).hexdigest()
 
 
@@ -120,18 +120,18 @@ def main(argv):
         builder = venv.EnvBuilder(symlinks=True, upgrade=True, with_pip=True)
         builder.create(env_dir=VENV_PATH)
 
-    # install/update "pip" and "poetry":
-    if not POETRY_PATH.is_file() or force_update:
+    # install/update "pip" and "pipenv":
+    if not PIPENV_PATH.is_file() or force_update:
         # Note: Under Windows pip.exe can't replace this own .exe file, so use the module way:
         verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip', 'setuptools')
-        verbose_check_call(PIP_PATH, 'install', 'poetry!=1.2.0')
+        verbose_check_call(PIP_PATH, 'install', 'pipenv')
 
-    # install via poetry, if:
+    # install via pipenv, if:
     #   1. .venv not exists
     #   2. "--update" used
-    #   3. poetry.lock file was changed
+    #   3. Pipfile.lock file was changed
     if not PROJECT_SHELL_SCRIPT.is_file() or force_update or not venv_up2date():
-        verbose_check_call(POETRY_PATH, 'install')
+        verbose_check_call(PIPENV_PATH, 'install', '--dev', '--editable', '.')
         store_dep_hash()
 
     # The cmd2 shell should not abort on Ctrl-C => ignore "Interrupt from keyboard" signal:

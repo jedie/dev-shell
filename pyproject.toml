@@ -1,42 +1,30 @@
-[tool.poetry]
+[project]
 name = "dev-shell"
 version = "0.6.1"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
-authors = ["Jens Diemer <python@jensdiemer.de>"]
-homepage = "https://github.com/jedie/dev-shell"
-license = "GNU General Public License v3.0"
-packages = [
-    { include = "dev_shell" },
-]
+authors = [{name = 'Jens Diemer', email = 'python@jensdiemer.de'}]
+#homepage = "https://github.com/jedie/dev-shell"
+license = {text = "GNU General Public License v3.0"}
+#packages = [
+#    { include = "dev_shell" },
+#]
 
-[tool.poetry.scripts]
+[tool.setuptools]
+packages = ["dev_shell"]
+
+[project.scripts]
 devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
-[tool.poetry.dependencies]
-python = ">=3.7,<4.0.0"
-cmd2 = "*"  # https://github.com/python-cmd2/cmd2
 
-# fix completion for Mac OS:
-gnureadline = { version = "*", markers = "sys_platform == 'darwin'" }
+[console_scripts]
+devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
-
-[tool.poetry.dev-dependencies]
-cmd2_ext_test = "*"
-poetry-publish = "*"  # https://github.com/jedie/poetry-publish
-pytest = "*"
-pytest-randomly = "*"
-pytest-cov = "*"
-pytest-darker = "*"  # https://github.com/akaihola/pytest-darker
-# TODO: pytest-mypy = "*"
-tox = "*"
-pyupgrade = "*"  # https://github.com/asottile/pyupgrade
-flake8 = "*"
-isort = "*"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 
 [tool.darker]
 src = ['.',]
@@ -71,7 +59,7 @@ omit = [".*"]
 [tool.pytest.ini_options]
 # https://docs.pytest.org/en/latest/customize.html#pyproject-toml
 minversion = "6.0"
-norecursedirs = ".* .git __pycache__ conf coverage* dist htmlcov"
+norecursedirs = ".* .git __pycache__ conf coverage* build dist htmlcov"
 # sometimes helpfull "addopts" arguments:
 #    -vv
 #    --verbose
