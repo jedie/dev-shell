@@ -1,0 +1,18 @@
+[packages]
+cmd2 = "*"  # https://github.com/python-cmd2/cmd2
+# fix completion for Mac OS:
+gnureadline = { version = "*", markers = "sys_platform == 'darwin'" }
+
+[dev-packages]
+cmd2_ext_test = "*"
+poetry-publish = "*"  # https://github.com/jedie/poetry-publish
+pytest = "*"
+pytest-randomly = "*"
+pytest-cov = "*"
+pytest-darker = "*"  # https://github.com/akaihola/pytest-darker
+# TODO: pytest-mypy = "*"
+tox = "*"
+pyupgrade = "*"  # https://github.com/asottile/pyupgrade
+flake8 = "*"
+isort = "*"
+dev-shell = {editable = true, path = "."}

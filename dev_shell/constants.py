@@ -12,9 +12,10 @@ else:
     BIN_NAME = 'bin'
 
 VENV_PATH = BASE_PATH / '.venv'
+assert VENV_PATH.is_dir(), f'Path wrong: {VENV_PATH}'
 
 BIN_PATH = VENV_PATH / BIN_NAME
-assert BIN_PATH.is_dir()
+assert BIN_PATH.is_dir(), f'Path wrong: {BIN_PATH}'
 
 
 # The source file path for external projects:
