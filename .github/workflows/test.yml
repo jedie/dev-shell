@@ -33,6 +33,15 @@ jobs:
       with:
         python-version: '${{ matrix.python-version }}'
 
+    - uses: actions/cache@v2
+      with:
+        path: ~/.cache/
+        key: dot-cache-files
+
+    - name: 'pip cache information'
+      run: |
+        pip3 cache info
+
     - name: 'Bootstrap'
       run: |
         python3 devshell.py quit
