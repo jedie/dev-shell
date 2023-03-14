@@ -27,7 +27,7 @@ poetry-publish = "*"  # https://github.com/jedie/poetry-publish
 pytest = "*"
 pytest-randomly = "*"
 pytest-cov = "*"
-pytest-darker = "*"  # https://github.com/akaihola/pytest-darker
+darker = "*"  # https://github.com/akaihola/darker
 # TODO: pytest-mypy = "*"
 tox = "*"
 pyupgrade = "*"  # https://github.com/asottile/pyupgrade
@@ -86,7 +86,6 @@ addopts = """
     --cov-report xml
     --no-cov-on-fail
     --showlocals
-    --darker
     --doctest-modules
     --failed-first
     --last-failed-no-failures all
