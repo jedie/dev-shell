@@ -44,8 +44,10 @@ class RedirectStdOutErr:
         self._output = None
 
     def __enter__(self):
-        self._stdout_redirect = redirect_stdout(self._buffer).__enter__()
-        self._stderr_redirect = redirect_stderr(self._buffer).__enter__()
+        self._stdout_redirect = redirect_stdout(self._buffer)
+        self._stdout_redirect.__enter__()
+        self._stderr_redirect = redirect_stderr(self._buffer)
+        self._stderr_redirect.__enter__()
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
