@@ -11,7 +11,7 @@ This small project is intended to improve the start-up for collaborators.
 
 The idea is to make the project setup as simple as possible. Just clone the sources and start a script and you're done ;)
 
-Why in hell not just a `Makefile`? Because it doesn't out-of-the-box under Windows and MacOS, the dev-shell does ;) 
+Why in hell not just a `Makefile`? Because it doesn't out-of-the-box under Windows and MacOS, the dev-shell does ;)
 
 Run Tests? Just start the script and call the "run test command".
 
@@ -96,6 +96,7 @@ You can also just delete `/.venv/` and start `devshell.py` again ;)
 
 | dev-shell version | OS                      | Python version      |
 |-------------------|-------------------------|---------------------|
+| >=v0.7.0          | Linux + MacOS + Windows | 3.11, 3.10, 3.9     |
 | >=v0.5.0          | Linux + MacOS + Windows | 3.10, 3.9, 3.8, 3.7 |
 | >=v0.0.1          | Linux + MacOS + Windows | 3.9, 3.8, 3.7       |
 
@@ -103,8 +104,11 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v.6.1...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.7.0...main)
   * TBC
+* [0.7.0 - 2023-04-25](https://github.com/jedie/dev-shell/compare/v0.6.1...v0.7.0)
+  * Update test matrix
+  * update requirements
 * [0.6.1 - 2022-09-02](https://github.com/jedie/dev-shell/compare/v0.6.0...v0.6.1)
   * Set default subprocess timeout to 5 Min.
   * Skip buggy Poetry v1.2.0

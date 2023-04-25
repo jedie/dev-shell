@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.6.1"
+version = "0.7.0rc0"
 description = "Devloper shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
@@ -14,7 +14,7 @@ packages = [
 devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
 [tool.poetry.dependencies]
-python = ">=3.7,<4.0.0"
+python = ">=3.9,<4.0.0"
 cmd2 = "*"  # https://github.com/python-cmd2/cmd2
 
 # fix completion for Mac OS:
@@ -99,7 +99,7 @@ addopts = """
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py{37,38,39,310}
+envlist = py{39,310,311}
 skip_missing_interpreters = True
 
 [testenv]
