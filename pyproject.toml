@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "dev-shell"
-version = "0.7.0"
-description = "Devloper shell for easy startup..."
+version = "0.8.0"
+description = "Developer shell for easy startup..."
 readme = "README.md"
 authors = ["Jens Diemer <python@jensdiemer.de>"]
 homepage = "https://github.com/jedie/dev-shell"
@@ -14,12 +14,8 @@ packages = [
 devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
 [tool.poetry.dependencies]
-python = ">=3.9,<4.0.0"
+python = ">=3.9"
 cmd2 = "*"  # https://github.com/python-cmd2/cmd2
-
-# fix completion for Mac OS:
-gnureadline = { version = "*", markers = "sys_platform == 'darwin'" }
-
 
 [tool.poetry.dev-dependencies]
 cmd2_ext_test = "*"
