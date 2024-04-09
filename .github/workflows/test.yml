@@ -51,8 +51,11 @@ jobs:
         python3 devshell.py list_venv_packages
 
     - name: 'Run tests with Python v${{ matrix.python-version }}'
+      env:
+        PYTHONUNBUFFERED: 1
+        PYTHONWARNINGS: always
       run: |
-        python3 devshell.py tox -e python
+        python3 devshell.py tox
 
     - name: 'Upload coverage report'
       uses: codecov/codecov-action@v2

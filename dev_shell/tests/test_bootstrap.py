@@ -88,12 +88,16 @@ class BootstrapTestCase(TestCase):
         assert stderr == ''
         assert f'{VENV_POETRY} install' in stdout
         assert f'{DEVSHELL_CALL}\n' in stdout
-        assert check_calls == [
-            f'{VENV_PYTHON} -m pip install -U pip setuptools',
-            f'{VENV_PIP} install poetry!=1.2.0',
-            f'{VENV_POETRY} install',
-            DEVSHELL_CALL
-        ]
+        self.assertEqual(
+            check_calls,
+            [
+                f'{VENV_PYTHON} -m pip install -U pip',
+                f'{VENV_PYTHON} -m pip install -U pip setuptools',
+                f'{VENV_PIP} install poetry',
+                f'{VENV_POETRY} install',
+                DEVSHELL_CALL,
+            ],
+        )
         create_mock.assert_called_once_with(env_dir=VENV_PATH)
 
     def test_help(self):

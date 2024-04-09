@@ -14,7 +14,7 @@ packages = [
 devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
 [tool.poetry.dependencies]
-python = ">=3.9"
+python = ">=3.9,<4.0"
 cmd2 = "*"  # https://github.com/python-cmd2/cmd2
 
 [tool.poetry.dev-dependencies]
@@ -38,7 +38,6 @@ build-backend = "poetry.core.masonry.api"
 src = ['.',]
 revision = "origin/main..."
 line_length = 100
-verbose = true
 skip_string_normalization = true
 diff = false
 check = false

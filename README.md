@@ -108,6 +108,7 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
   * TBC
 * [0.8.0 - 2024-04-09](https://github.com/jedie/dev-shell/compare/v0.7.0...v0.8.0)
   * Remove "gnureadline" as dependency
+  * update boot script
   * update requirements
 * [0.7.0 - 2023-04-25](https://github.com/jedie/dev-shell/compare/v0.6.1...v0.7.0)
   * Update test matrix

@@ -9,12 +9,12 @@
     This file is from: https://pypi.org/project/dev-shell/
     Source: https://github.com/jedie/dev-shell/blob/main/devshell.py
 
-    :copyleft: 2021-2022 by Jens Diemer
+    :copyleft: 2021-2024 by Jens Diemer
     :license: GNU GPL v3 or above
 """
-
 import argparse
 import hashlib
+import shlex
 import signal
 import subprocess
 import sys
@@ -22,17 +22,25 @@ import venv
 from pathlib import Path
 
 
+def print_no_pip_error():
+    print('Error: Pip not available!')
+    print('Hint: "apt-get install python3-venv"\n')
+
+
 try:
-    import ensurepip  # noqa
+    from ensurepip import version
 except ModuleNotFoundError as err:
     print(err)
     print('-' * 100)
-    print('Error: Pip not available!')
-    print('Hint: "apt-get install python3-venv"\n')
+    print_no_pip_error()
     raise
+else:
+    if not version():
+        print_no_pip_error()
+        sys.exit(-1)
 
 
-assert sys.version_info >= (3, 7), 'Python version is too old!'
+assert sys.version_info >= (3, 9), f'Python version {sys.version_info} is too old!'
 
 
 if sys.platform == 'win32':  # wtf
@@ -60,25 +68,24 @@ PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
 
 
 def get_dep_hash():
-    """ Get SHA512 hash from poetry.lock content. """
+    """Get SHA512 hash from lock file content."""
     return hashlib.sha512(DEP_LOCK_PATH.read_bytes()).hexdigest()
 
 
 def store_dep_hash():
-    """ Generate /.venv/.dep_hash """
+    """Generate .venv/.dep_hash"""
     DEP_HASH_PATH.write_text(get_dep_hash())
 
 
 def venv_up2date():
-    """ Is existing .venv is up-to-date? """
+    """Is existing .venv is up-to-date?"""
     if DEP_HASH_PATH.is_file():
         return DEP_HASH_PATH.read_text() == get_dep_hash()
     return False
 
 
 def verbose_check_call(*popen_args):
-    popen_args = [str(arg) for arg in popen_args]  # e.g.: Path() -> str for python 3.7
-    print(f'\n+ {" ".join(popen_args)}\n')
+    print(f'\n+ {shlex.join(str(arg) for arg in popen_args)}\n')
     return subprocess.check_call(popen_args)
 
 
@@ -86,7 +93,6 @@ def noop_signal_handler(signal_num, frame):
     """
     Signal handler that does nothing: Used to ignore "Ctrl-C" signals
     """
-    pass
 
 
 def main(argv):
@@ -119,12 +125,14 @@ def main(argv):
         print('Create virtual env here:', VENV_PATH.absolute())
         builder = venv.EnvBuilder(symlinks=True, upgrade=True, with_pip=True)
         builder.create(env_dir=VENV_PATH)
+        # Update pip
+        verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip')
 
     # install/update "pip" and "poetry":
     if not POETRY_PATH.is_file() or force_update:
         # Note: Under Windows pip.exe can't replace this own .exe file, so use the module way:
         verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip', 'setuptools')
-        verbose_check_call(PIP_PATH, 'install', 'poetry!=1.2.0')
+        verbose_check_call(PIP_PATH, 'install', 'poetry')
 
     # install via poetry, if:
     #   1. .venv not exists
