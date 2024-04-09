@@ -23,7 +23,7 @@ def call_mocked_subprocess(func_name, func, *args, catch_sys_exit=False, **kwarg
             if isinstance(popenargs, str):
                 command_str = popenargs
             else:
-                command_str = ' '.join(popenargs)
+                command_str = ' '.join([str(arg) for arg in popenargs])
 
             cwd = kwargs.get('cwd')
             if cwd:
