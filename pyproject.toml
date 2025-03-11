@@ -1,5 +1,5 @@
 [project]
-name = "dev_shell"
+name = "dev-shell"
 dynamic = ["version"]
 description = "Developer shell for easy startup..."
 license = {text = "GPL-3.0-or-later"}
