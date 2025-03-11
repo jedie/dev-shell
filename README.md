@@ -1,11 +1,11 @@
 # A "dev-shell" for Python projects ;)
 
-[![Test](https://github.com/jedie/dev-shell/actions/workflows/test.yml/badge.svg?branch=bugfix-path)](https://github.com/jedie/dev-shell/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/jedie/dev-shell/branch/main/graph/badge.svg)](https://codecov.io/gh/jedie/dev-shell)
+[![tests](https://github.com/jedie/dev-shell/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jedie/dev-shell/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/github/jedie/dev_shell/branch/main/graph/badge.svg)](https://app.codecov.io/github/jedie/dev_shell)
+[![dev_shell @ PyPi](https://img.shields.io/pypi/v/dev_shell?label=dev_shell%20%40%20PyPi)](https://pypi.org/project/dev_shell/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/dev_shell)](https://github.com/jedie/dev-shell/blob/main/pyproject.toml)
+[![License GPL-3.0-or-later](https://img.shields.io/pypi/l/dev_shell)](https://github.com/jedie/dev-shell/blob/main/LICENSE)
 
-[![ddev-shell @ PyPi](https://img.shields.io/pypi/v/dev-shell?label=dev-shell%20%40%20PyPi)
-![Python Versions](https://img.shields.io/pypi/pyversions/dev-shell)
-![License GPL V3+](https://img.shields.io/pypi/l/dev-shell)](https://pypi.org/project/dev-shell/)
 
 This small project is intended to improve the start-up for collaborators.
 
@@ -20,7 +20,7 @@ The "dev-shell" is the base to create a CLI and a shell. It also shows how to ma
 ```bash
 ~$ git clone https://github.com/jedie/dev-shell.git
 ~$ cd dev-shell
-~/dev-shell$ ./devshell.py pytest
+~/dev-shell$ ./devshell.py test
 ```
 
 
@@ -61,7 +61,7 @@ Documented commands (use 'help -v' for verbose/'help <topic>' for details):
 
 dev-shell commands
 ==================
-fix_code_style  linting  list_venv_packages  publish  pytest  update
+fix_code_style  linting  list_venv_packages  publish  test  update
 
 ...
 
@@ -79,7 +79,7 @@ Developer shell - dev_shell - v0.2.0
 (dev_shell) help
 ```
 
-Info: The `.venv` will be automatically updated via `poetry install` call if the `poetry.lock` file has been changed.
+Info: The `.venv` will be automatically updated via `poetry install` call if the `uv.lock` file has been changed.
 
 A call with `--update` will force to call some create/update steps, e.g.:
 
@@ -106,6 +106,8 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.8.0...main)
   * TBC
+* [0.9.0 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.8.0...v0.9.0)
+  * Replace `poetry` with `uv`
 * [0.8.0 - 2024-04-09](https://github.com/jedie/dev-shell/compare/v0.7.0...v0.8.0)
   * Remove "gnureadline" as dependency
   * update boot script
