@@ -40,7 +40,7 @@ else:
         sys.exit(-1)
 
 
-assert sys.version_info >= (3, 9), f'Python version {sys.version_info} is too old!'
+assert sys.version_info >= (3, 11), f'Python version {sys.version_info} is too old!'
 
 
 if sys.platform == 'win32':  # wtf
@@ -48,21 +48,21 @@ if sys.platform == 'win32':  # wtf
     BIN_NAME = 'Scripts'
     FILE_EXT = '.exe'
 else:
-    # Files under Linux/Mac and all other than Windows, e.g.: .../.venv/bin/python
+    # Files under Linux/Mac and all other than Windows, e.g.: .../.venv/bin/python3
     BIN_NAME = 'bin'
     FILE_EXT = ''
 
 BASE_PATH = Path(__file__).parent
 VENV_PATH = BASE_PATH / '.venv'
 BIN_PATH = VENV_PATH / BIN_NAME
-PYTHON_PATH = BIN_PATH / f'python{FILE_EXT}'
+PYTHON_PATH = BIN_PATH / f'python3{FILE_EXT}'
 PIP_PATH = BIN_PATH / f'pip{FILE_EXT}'
-POETRY_PATH = BIN_PATH / f'poetry{FILE_EXT}'
+UV_PATH = BIN_PATH / f'uv{FILE_EXT}'
 
-DEP_LOCK_PATH = BASE_PATH / 'poetry.lock'
+DEP_LOCK_PATH = BASE_PATH / 'uv.lock'
 DEP_HASH_PATH = VENV_PATH / '.dep_hash'
 
-# script file defined in pyproject.toml as [tool.poetry.scripts]
+# script file defined in pyproject.toml as [console_scripts]
 # (Under Windows: ".exe" not added!)
 PROJECT_SHELL_SCRIPT = BIN_PATH / 'devshell'
 
@@ -120,35 +120,32 @@ def main(argv):
         force_update = False
         extra_args = argv[1:]
 
-    # Create virtual env in ".../.venv/":
+    # Create virtual env in ".venv/":
     if not PYTHON_PATH.is_file() or force_update:
-        print('Create virtual env here:', VENV_PATH.absolute())
+        print(f'Create virtual env here: {VENV_PATH.absolute()}')
         builder = venv.EnvBuilder(symlinks=True, upgrade=True, with_pip=True)
         builder.create(env_dir=VENV_PATH)
+
+    if not PROJECT_SHELL_SCRIPT.is_file() or not venv_up2date() or force_update:
         # Update pip
         verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip')
 
-    # install/update "pip" and "poetry":
-    if not POETRY_PATH.is_file() or force_update:
-        # Note: Under Windows pip.exe can't replace this own .exe file, so use the module way:
-        verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'pip', 'setuptools')
-        verbose_check_call(PIP_PATH, 'install', 'poetry')
+        # Install uv
+        verbose_check_call(PYTHON_PATH, '-m', 'pip', 'install', '-U', 'uv')
 
-    # install via poetry, if:
-    #   1. .venv not exists
-    #   2. "--update" used
-    #   3. poetry.lock file was changed
-    if not PROJECT_SHELL_SCRIPT.is_file() or force_update or not venv_up2date():
-        verbose_check_call(POETRY_PATH, 'install')
+        # install requirements
+        verbose_check_call(UV_PATH, 'sync')
+
+        # install project
+        verbose_check_call(PIP_PATH, 'install', '--no-deps', '-e', '.')
         store_dep_hash()
 
     # The cmd2 shell should not abort on Ctrl-C => ignore "Interrupt from keyboard" signal:
     signal.signal(signal.SIGINT, noop_signal_handler)
 
-    # Run project cmd shell via "setup.py" entrypoint:
-    # (Call it via python, because Windows sucks calling the file direct)
+    # Call our entry point CLI:
     try:
-        verbose_check_call(PYTHON_PATH, PROJECT_SHELL_SCRIPT, *extra_args)
+        verbose_check_call(PROJECT_SHELL_SCRIPT, *extra_args)
     except subprocess.CalledProcessError as err:
         sys.exit(err.returncode)
 

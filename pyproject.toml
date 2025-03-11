@@ -1,105 +1,140 @@
-[tool.poetry]
-name = "dev-shell"
-version = "0.8.0"
+[project]
+name = "dev_shell"
+dynamic = ["version"]
 description = "Developer shell for easy startup..."
+license = {text = "GPL-3.0-or-later"}
 readme = "README.md"
-authors = ["Jens Diemer <python@jensdiemer.de>"]
-homepage = "https://github.com/jedie/dev-shell"
-license = "GNU General Public License v3.0"
-packages = [
-    { include = "dev_shell" },
+authors = [
+    {name = 'Jens Diemer', email = 'dev-shell@jensdiemer.de'}
+]
+requires-python = ">=3.11"
+dependencies = [
+    "cmd2",  # https://github.com/python-cmd2/cmd2
+    "cli-base-utilities",  # https://github.com/jedie/cli-base-utilities
 ]
 
-[tool.poetry.scripts]
+[dependency-groups]
+dev = [
+    "cmd2_ext_test",  # https://github.com/python-cmd2/cmd2/tree/master/plugins/ext_test
+    "manageprojects",  # https://github.com/jedie/manageprojects
+    "urllib3", # for bx_py_utils.test_utils.deny_requests.deny_any_real_request() in tests
+    "uv",  # https://github.com/astral-sh/uv
+    "setuptools",  # https://github.com/pypa/setuptools
+    "nox",  # https://github.com/wntrblm/nox
+    "coverage",  # https://github.com/nedbat/coveragepy
+    "autopep8",  # https://github.com/hhatto/autopep8
+    "pyupgrade",  # https://github.com/asottile/pyupgrade
+    "flake8",  # https://github.com/pycqa/flake8
+    "flake8-bugbear",  # https://github.com/PyCQA/flake8-bugbear
+    "pyflakes",  # https://github.com/PyCQA/pyflakes
+    "codespell",  # https://github.com/codespell-project/codespell
+    "EditorConfig",  # https://github.com/editorconfig/editorconfig-core-py
+    "pip-audit",  # https://github.com/pypa/pip-audit
+    "twine",  # https://github.com/pypa/twine
+
+    # https://github.com/akaihola/darker
+    # https://github.com/ikamensh/flynt
+    # https://github.com/pycqa/isort
+    # https://github.com/pygments/pygments
+    "darker[flynt, isort, color]",
+]
+
+[project.urls]
+Documentation = "https://github.com/jedie/dev-shell"
+Source = "https://github.com/jedie/dev-shell"
+
+[project.scripts]
 devshell = 'dev_shell.dev_shell_app:devshell_cmdloop'
 
-[tool.poetry.dependencies]
-python = ">=3.9,<4.0"
-cmd2 = "*"  # https://github.com/python-cmd2/cmd2
-
-[tool.poetry.dev-dependencies]
-cmd2_ext_test = "*"
-poetry-publish = "*"  # https://github.com/jedie/poetry-publish
-pytest = "*"
-pytest-randomly = "*"
-pytest-cov = "*"
-darker = "*"  # https://github.com/akaihola/darker
-# TODO: pytest-mypy = "*"
-tox = "*"
-pyupgrade = "*"  # https://github.com/asottile/pyupgrade
-flake8 = "*"
-isort = "*"
-
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0", "setuptools_scm>=7.1"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dev_shell*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "dev_shell.__version__"}
+
+
+[tool.cli_base.pip_audit]
+requirements=["requirements.dev.txt"]
+strict=true
+require_hashes=true
+ignore-vuln=[]
+
+
+[tool.cli_base]
+version_module_name = "dev_shell"  # Used by "update-readme-history" git hook
+
 
 [tool.darker]
-src = ['.',]
+src = ['.']
 revision = "origin/main..."
-line_length = 100
+line_length = 119
+color = true
 skip_string_normalization = true
 diff = false
 check = false
 stdout = false
 isort = true
-lint = [
-    "flake8",
-]
 log_level = "INFO"
 
 
 [tool.isort]
 # https://pycqa.github.io/isort/docs/configuration/config_files/#pyprojecttoml-preferred-format
 atomic=true
-known_first_party=["dev_shell"]
 profile='black'
-line_length=100
-skip_glob=["*/htmlcov/*"]
+skip_glob=['.*', '*/htmlcov/*']
+known_first_party=['dev_shell']
+line_length=119
 lines_after_imports=2
 
 
 [tool.coverage.run]
-omit = [".*"]
+branch = true
+parallel = true
+concurrency = ["multiprocessing"]
+source = ['.']
+command_line = '-m unittest --verbose --locals --buffer'
+
+[tool.coverage.report]
+omit = ['.*', '*/tests/*']
+skip_empty = true
+fail_under = 30
+show_missing = true
+exclude_lines = [
+    'if self.debug:',
+    'pragma: no cover',
+    'raise NotImplementedError',
+    'if __name__ == .__main__.:',
+]
 
 
-[tool.pytest.ini_options]
-# https://docs.pytest.org/en/latest/customize.html#pyproject-toml
-minversion = "6.0"
-norecursedirs = ".* .git __pycache__ conf coverage* dist htmlcov"
-# sometimes helpfull "addopts" arguments:
-#    -vv
-#    --verbose
-#    --capture=no
-#    --trace-config
-#    --full-trace
-#    -p no:warnings
-addopts = """
-    --cov=.
-    --cov-report term-missing
-    --cov-report html
-    --cov-report xml
-    --no-cov-on-fail
-    --showlocals
-    --doctest-modules
-    --failed-first
-    --last-failed-no-failures all
-    --new-first
-"""
-# TODO: --mypy
+[tool.mypy]
+warn_unused_configs = true
+ignore_missing_imports = true
+allow_redefinition = true  # https://github.com/python/mypy/issues/7165
+show_error_codes = true
+plugins = []
+exclude = ['.venv', 'tests']
 
 
-[tool.tox]
-# https://tox.wiki/en/latest/example/basic.html#pyproject-toml-tox-legacy-ini
-legacy_tox_ini = """
-[tox]
-isolated_build = True
-envlist = py{39,310,311}
-skip_missing_interpreters = True
+[manageprojects] # https://github.com/jedie/manageprojects
+initial_revision = "38129ec"
+initial_date = 2025-02-12T17:41:38+01:00
+cookiecutter_template = "https://github.com/jedie/cookiecutter_templates/"
+cookiecutter_directory = "uv-python"
 
-[testenv]
-passenv = *
-commands =
-    python --version
-    python devshell.py pytest
-"""
+[manageprojects.cookiecutter_context.cookiecutter]
+full_name = "Jens Diemer"
+github_username = "jedie"
+author_email = "dev-shell@jensdiemer.de"
+package_name = "dev_shell"
+package_version = "0.9.0"
+package_description = "Developer shell for easy startup..."
+package_url = "https://github.com/jedie/dev-shell"
+issues_url = "https://github.com/jedie/dev-shell/issues"
+license = "GPL-3.0-or-later"
+_template = "https://github.com/jedie/cookiecutter_templates/"

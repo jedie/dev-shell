@@ -1,0 +1,57 @@
+
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  schedule:
+    - cron: '0 8 * * *'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.13", "3.12", "3.11"]
+    steps:
+    - name: Checkout
+      run: |
+        echo $GITHUB_REF $GITHUB_SHA
+        git clone https://github.com/$GITHUB_REPOSITORY.git .
+        git fetch origin $GITHUB_SHA:temporary-ci-branch
+        git checkout $GITHUB_SHA || (git fetch && git checkout $GITHUB_SHA)
+
+    - name: 'Set up Python ${{ matrix.python-version }}'
+      uses: actions/setup-python@v5
+      # https://github.com/marketplace/actions/setup-python
+      with:
+        python-version: '${{ matrix.python-version }}'
+        cache: 'pip' # caching pip dependencies
+        cache-dependency-path: '**/requirements.*.txt'
+
+    - name: 'Bootstrap app venv'
+      # The first CLI call will create the .venv
+      run: |
+        ./devshell.py version
+
+    - name: 'app CLI help'
+      run: |
+        ./devshell.py --help
+
+    - name: 'Run tests with Python v${{ matrix.python-version }}'
+      env:
+        PYTHONUNBUFFERED: 1
+        PYTHONWARNINGS: always
+      run: |
+        ./devshell.py coverage
+
+    - name: 'Upload coverage report'
+      uses: codecov/codecov-action@v4
+      # https://github.com/marketplace/actions/codecov
+      with:
+        fail_ci_if_error: false
+        verbose: true
+

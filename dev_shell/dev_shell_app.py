@@ -35,7 +35,7 @@ def get_devshell_app_kwargs():
 def devshell_cmdloop():
     """
     Entry point to start the "dev-shell" cmd2 app.
-    Used in: [tool.poetry.scripts]
+    Used in: [project.scripts]
     """
     app = DevShellApp(**get_devshell_app_kwargs())
     run_cmd2_app(app)  # Run a cmd2 App as CLI or shell

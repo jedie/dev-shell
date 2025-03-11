@@ -1,5 +1,4 @@
 from unittest.case import TestCase
-
 from cmd2 import CommandResult
 from cmd2.ansi import strip_style
 from cmd2_ext_test import ExternalTestMixin

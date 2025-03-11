@@ -3,9 +3,15 @@ import sys
 from pathlib import Path
 
 import cmd2
+from cli_base.cli_tools import code_style
+from cli_base.cli_tools.dev_tools import run_coverage, run_unittest_cli
+from cli_base.cli_tools.subprocess_utils import ToolsExecutor
+from cli_base.run_pip_audit import run_pip_audit
 from cmd2 import Cmd2ArgumentParser, with_argparser
 
+from dev_shell import __version__
 from dev_shell.command_sets import DevShellBaseCommandSet
+from dev_shell.constants import PACKAGE_ROOT
 from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
 
@@ -17,7 +23,7 @@ class DevShellCommandSet(DevShellBaseCommandSet):
     """
 
     MIN_PY_MAJOR_VERSION = 3
-    MIN_PY_MINOR_VERSION = 7
+    MIN_PY_MINOR_VERSION = 11
 
     pyupgrade_argparser = Cmd2ArgumentParser()
     pyupgrade_argparser.add_argument('--exit-zero-even-if-changed', action='store_true')
@@ -57,42 +63,33 @@ class DevShellCommandSet(DevShellBaseCommandSet):
                 change_count += 1
         print(f'Out of {total_count} files, {change_count} have been updated.')
 
-    def do_pytest(self, statement: cmd2.Statement):
+    def do_test(self, statement: cmd2.Statement):
         """
-        Run dev-shell tests via pytest
+        Run the project's test suite using the unittest runner.
         """
-        verbose_check_call(
-            'pytest', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
-        )
+        run_unittest_cli(argv=statement.arg_list)
 
-    def do_tox(self, statement: cmd2.Statement):
+    def do_coverage(self, statement: cmd2.Statement):
         """
-        Call tox and pass all given arguments to it.
+        Run the project's test suite using the unittest runner and create a coverage report.
         """
-        verbose_check_call(
-            'tox', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
-        )
-
-    def do_poetry(self, statement: cmd2.Statement):
-        """
-        Call poetry and pass all given arguments to it.
-        """
-        verbose_check_call(
-            'poetry', *statement.arg_list, cwd=self.config.base_path, exit_on_error=True
-        )
+        run_coverage()
 
     def do_update(self, statement: cmd2.Statement):
         """
         Call "poetry update" to update all dependencies in .venv
         """
-        verbose_check_call(
-            'poetry',
-            'update',
-            '-v',
-            *statement.arg_list,
-            cwd=self.config.base_path,
-            exit_on_error=True
-        )
+        tools_executor = ToolsExecutor(cwd=PACKAGE_ROOT)
+
+        tools_executor.verbose_check_call('pip', 'install', '-U', 'pip')
+        tools_executor.verbose_check_call('pip', 'install', '-U', 'uv')
+        tools_executor.verbose_check_call('uv', 'lock', '--upgrade')
+
+        run_pip_audit(base_path=PACKAGE_ROOT)
+
+        # Install new dependencies in current .venv:
+        tools_executor.verbose_check_call('uv', 'sync')
+
         script_name = Path(sys.argv[0]).name
         print(bright_green(f'\n\nPlease restart "{script_name}" !\n'))
         sys.exit(0)  # Stop cmd
@@ -101,7 +98,13 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Fix code style by running darker
         """
-        verbose_check_call('darker', cwd=self.config.base_path)
+        code_style.fix(package_root=self.config.base_path)
+
+    def do_check_code_style(self, statement: cmd2.Statement):
+        """
+        Check code style by running darker
+        """
+        code_style.check(package_root=self.config.base_path)
 
     def do_list_venv_packages(self, statement: cmd2.Statement):
         """
@@ -120,13 +123,16 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         # So import it here to make this dependency "optional"
         from poetry_publish.publish import poetry_publish  # noqa
 
-        # Don't publish if test failed or code linting wrong:
-        self.do_pytest(statement)
+        run_unittest_cli(verbose=False, exit_after_run=False)  # Don't publish a broken state
 
         poetry_publish(
             package_root=self.config.base_path,
             version=self.config.version,
         )
+
+    def do_version(self, statement: cmd2.Statement):
+        print(__version__)
+        sys.exit(0)  # Stop cmd
 
 
 # Maybe a project that use dev-shell doesn't use poetry-publish:

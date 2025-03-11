@@ -10,14 +10,6 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 import devshell
-from dev_shell.constants import VENV_PATH
-from dev_shell.tests.constants import (
-    DEVSHELL_CALL,
-    VENV_DEVSHELL,
-    VENV_PIP,
-    VENV_POETRY,
-    VENV_PYTHON,
-)
 from dev_shell.tests.utils import call_mocked_subprocess
 from dev_shell.utils.assertion import assert_is_dir, assert_is_file
 
@@ -42,39 +34,34 @@ def call_devsetup_main(*args, catch_sys_exit=False):
 
 class BootstrapTestCase(TestCase):
     def test_up2date_bootstrap(self):
-        # .dep_hash is up-to-date -> no "poetry install" call:
+        # .dep_hash is up-to-date -> no "uv install" call:
         check_calls, stdout, stderr = call_devsetup_main()
-        assert stderr == ''
-        assert f'{DEVSHELL_CALL}\n' in stdout
-        assert check_calls == [DEVSHELL_CALL]
-        assert 'poetry' not in stdout
+        self.assertEqual(stderr, '')
+        self.assertIn('.venv/bin/devshell', stdout)
+        self.assertNotIn('uv ', stdout)
 
-    def test_poetry_install_call(self):
+    def test_uv_install_call(self):
         base_path = Path(devshell.__file__).parent
         assert_is_dir(base_path / 'dev_shell')
 
         DEP_HASH_PATH = base_path / '.venv' / '.dep_hash'
         assert_is_file(DEP_HASH_PATH)
 
-        DEP_LOCK_PATH = base_path / 'poetry.lock'
+        DEP_LOCK_PATH = base_path / 'uv.lock'
 
         current_hash = sha512(DEP_LOCK_PATH.read_bytes()).hexdigest()
 
         assert DEP_HASH_PATH.read_text() == current_hash
 
-        # Change the hash -> "poetry install" should be called:
+        # Change the hash -> "uv install" should be called:
 
         try:
             DEP_HASH_PATH.write_text('this is not the hash')
 
             check_calls, stdout, stderr = call_devsetup_main()
-            assert stderr == ''
-            assert f'{VENV_POETRY} install' in stdout
-            assert f'{VENV_PYTHON} {VENV_DEVSHELL}\n' in stdout
-            assert check_calls == [
-                f'{VENV_POETRY} install',  # <<< install called?
-                DEVSHELL_CALL
-            ]
+            self.assertEqual(stderr, '')
+            self.assertIn('uv sync', stdout)
+            self.assertIn('.venv/bin/devshell', stdout)
         finally:
             DEP_HASH_PATH.write_text(current_hash)
 
@@ -85,27 +72,18 @@ class BootstrapTestCase(TestCase):
         with mock.patch('venv.EnvBuilder.create') as create_mock:
             check_calls, stdout, stderr = call_devsetup_main('devshell.py', '--update')
 
-        assert stderr == ''
-        assert f'{VENV_POETRY} install' in stdout
-        assert f'{DEVSHELL_CALL}\n' in stdout
-        self.assertEqual(
-            check_calls,
-            [
-                f'{VENV_PYTHON} -m pip install -U pip',
-                f'{VENV_PYTHON} -m pip install -U pip setuptools',
-                f'{VENV_PIP} install poetry',
-                f'{VENV_POETRY} install',
-                DEVSHELL_CALL,
-            ],
-        )
-        create_mock.assert_called_once_with(env_dir=VENV_PATH)
+        self.assertEqual(stderr, '')
+        self.assertIn('Create virtual env here:', stdout)
+        self.assertIn('uv sync', stdout)
+        self.assertIn('.venv/bin/devshell\n', stdout)
+        create_mock.assert_called_once()
 
     def test_help(self):
         check_calls, stdout, stderr = call_devsetup_main(
             'devshell.py', '--help',
             catch_sys_exit=True
         )
-        assert stderr == ''
+        self.assertEqual(stderr, '')
         assert 'usage: devshell.py [-h] [--update] [command_args ' in stdout
         assert stdout.endswith('...live long and prosper...\n')
         assert check_calls == []
@@ -118,8 +96,6 @@ class BootstrapTestCase(TestCase):
             'devshell.py', 'not_existing_command', '--help',
             catch_sys_exit=True
         )
-        assert stderr == ''
+        self.assertEqual(stderr, '')
         assert 'not_existing_command --help' in stdout
-        assert check_calls == [
-            f'{DEVSHELL_CALL} not_existing_command --help'
-        ]
+        self.assertIn('.venv/bin/devshell not_existing_command --help', check_calls[0])
