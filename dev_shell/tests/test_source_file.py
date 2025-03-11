@@ -4,13 +4,14 @@ import subprocess
 import sys
 from unittest import TestCase
 
-from dev_shell.constants import BOOTSTRAP_SOURCE_FILE, PACKAGE_ROOT
+from dev_shell.constants import BOOTSTRAP_SOURCE_FILE
+from dev_shell.tests.constants import DEV_SHELL_PACKAGE_ROOT
 from dev_shell.utils.assertion import assert_is_file
 
 
 class SourceFileTestCase(TestCase):
     def test_source_file_is_up2date(self):
-        own_bootstrap_file = PACKAGE_ROOT / 'devshell.py'
+        own_bootstrap_file = DEV_SHELL_PACKAGE_ROOT / 'devshell.py'
         assert_is_file(own_bootstrap_file)
 
         are_the_same = filecmp.cmp(own_bootstrap_file, BOOTSTRAP_SOURCE_FILE, shallow=False)

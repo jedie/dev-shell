@@ -12,7 +12,7 @@ from cmd2 import Cmd2ArgumentParser, with_argparser
 import dev_shell
 from dev_shell import __version__
 from dev_shell.command_sets import DevShellBaseCommandSet
-from dev_shell.constants import PACKAGE_ROOT
+from dev_shell.constants import DEV_SHELL_PKG_PATH
 from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
 
@@ -82,17 +82,24 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         run_coverage()
 
+    def do_install(self, statement: cmd2.Statement):
+        """
+        Install current project as editable via pip
+        """
+        tools_executor = ToolsExecutor(cwd=self.config.base_path)
+        tools_executor.verbose_check_call('pip', 'install', '-e', '.')
+
     def do_update(self, statement: cmd2.Statement):
         """
         Call "poetry update" to update all dependencies in .venv
         """
-        tools_executor = ToolsExecutor(cwd=PACKAGE_ROOT)
+        tools_executor = ToolsExecutor(cwd=self.config.base_path)
 
         tools_executor.verbose_check_call('pip', 'install', '-U', 'pip')
         tools_executor.verbose_check_call('pip', 'install', '-U', 'uv')
         tools_executor.verbose_check_call('uv', 'lock', '--upgrade')
 
-        run_pip_audit(base_path=PACKAGE_ROOT)
+        run_pip_audit(base_path=self.config.base_path)
 
         # Install new dependencies in current .venv:
         tools_executor.verbose_check_call('uv', 'sync')
@@ -128,7 +135,11 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         run_unittest_cli(verbose=False, exit_after_run=False)  # Don't publish a broken state
 
-        publish_package(module=dev_shell, package_path=PACKAGE_ROOT, distribution_name='dev-shell')
+        publish_package(
+            module=dev_shell,
+            package_path=DEV_SHELL_PKG_PATH.parent,
+            distribution_name='dev-shell',
+        )
 
     def do_version(self, statement: cmd2.Statement):
         print(__version__)
