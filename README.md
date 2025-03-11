@@ -1,5 +1,7 @@
 # A "dev-shell" for Python projects ;)
 
+**Note: The continuation of this project is uncertain!**
+
 [![tests](https://github.com/jedie/dev-shell/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jedie/dev-shell/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/github/jedie/dev_shell/branch/main/graph/badge.svg)](https://app.codecov.io/github/jedie/dev_shell)
 [![dev_shell @ PyPi](https://img.shields.io/pypi/v/dev_shell?label=dev_shell%20%40%20PyPi)](https://pypi.org/project/dev_shell/)
@@ -106,6 +108,8 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.8.0...main)
   * TBC
+* [0.9.1 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.9.0...v0.9.1)
+  * Fix usage as package in external projects
 * [0.9.0 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.8.0...v0.9.0)
   * Replace `poetry` with `uv`
 * [0.8.0 - 2024-04-09](https://github.com/jedie/dev-shell/compare/v0.7.0...v0.8.0)
