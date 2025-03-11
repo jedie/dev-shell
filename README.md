@@ -106,6 +106,8 @@ See also github test configuration: [.github/workflows/test.yml](https://github.
 
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.8.0...main)
   * TBC
+* [0.9.1 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.9.0...v0.9.1)
+  * Fix usage as package in external projects
 * [0.9.0 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.8.0...v0.9.0)
   * Replace `poetry` with `uv`
 * [0.8.0 - 2024-04-09](https://github.com/jedie/dev-shell/compare/v0.7.0...v0.8.0)

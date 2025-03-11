@@ -1,21 +1,12 @@
-import sys
 from pathlib import Path
 
+from bx_py_utils.path import assert_is_file
 
-PACKAGE_ROOT = Path(__file__).parent.parent.resolve()
-assert Path(PACKAGE_ROOT / 'dev_shell').is_dir(), f'Path wrong: {PACKAGE_ROOT}'
+import dev_shell
 
 
-if sys.platform == 'win32':  # wtf
-    BIN_NAME = 'Scripts'
-else:
-    BIN_NAME = 'bin'
-
-VENV_PATH = PACKAGE_ROOT / '.venv'
-
-BIN_PATH = VENV_PATH / BIN_NAME
-assert BIN_PATH.is_dir()
-
+DEV_SHELL_PKG_PATH = Path(dev_shell.__file__).parent.resolve()
 
 # The source file path for external projects:
-BOOTSTRAP_SOURCE_FILE = PACKAGE_ROOT / 'dev_shell' / 'bootstrap-source.py'
+BOOTSTRAP_SOURCE_FILE = DEV_SHELL_PKG_PATH / 'bootstrap-source.py'
+assert_is_file(BOOTSTRAP_SOURCE_FILE)
