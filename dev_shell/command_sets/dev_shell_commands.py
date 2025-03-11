@@ -9,11 +9,18 @@ from cli_base.cli_tools.subprocess_utils import ToolsExecutor
 from cli_base.run_pip_audit import run_pip_audit
 from cmd2 import Cmd2ArgumentParser, with_argparser
 
+import dev_shell
 from dev_shell import __version__
 from dev_shell.command_sets import DevShellBaseCommandSet
 from dev_shell.constants import PACKAGE_ROOT
 from dev_shell.utils.colorful import bright_green
 from dev_shell.utils.subprocess_utils import verbose_check_call
+
+
+try:
+    from manageprojects.utilities.publish import publish_package  # dev dependency
+except ModuleNotFoundError:
+    publish_package = None
 
 
 @cmd2.with_default_category('dev-shell commands')
@@ -119,25 +126,15 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         """
         Publish "dev-shell" to PyPi
         """
-        # Maybe a project that use dev-shell doesn't use poetry-publish, too!
-        # So import it here to make this dependency "optional"
-        from poetry_publish.publish import poetry_publish  # noqa
-
         run_unittest_cli(verbose=False, exit_after_run=False)  # Don't publish a broken state
 
-        poetry_publish(
-            package_root=self.config.base_path,
-            version=self.config.version,
-        )
+        publish_package(module=dev_shell, package_path=PACKAGE_ROOT, distribution_name='dev-shell')
 
     def do_version(self, statement: cmd2.Statement):
         print(__version__)
         sys.exit(0)  # Stop cmd
 
 
-# Maybe a project that use dev-shell doesn't use poetry-publish:
-try:
-    import poetry_publish  # noqa
-except ModuleNotFoundError:
+if publish_package is None:
     # Remove the "publish" command
     del DevShellCommandSet.do_publish
