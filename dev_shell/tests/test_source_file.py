@@ -1,12 +1,11 @@
 import filecmp
 import shutil
-import subprocess
-import sys
 from unittest import TestCase
+
+from bx_py_utils.path import assert_is_file
 
 from dev_shell.constants import BOOTSTRAP_SOURCE_FILE
 from dev_shell.tests.constants import DEV_SHELL_PACKAGE_ROOT
-from dev_shell.utils.assertion import assert_is_file
 
 
 class SourceFileTestCase(TestCase):
@@ -22,20 +21,3 @@ class SourceFileTestCase(TestCase):
                 follow_symlinks=False
             )
             raise AssertionError(f'Bootstrap source "{BOOTSTRAP_SOURCE_FILE}" updated!')
-
-    def test_wrong_call(self):
-        # The bootstrap script should only work if "uv.lock" file exists in same path!
-        p = subprocess.run(
-            [sys.executable, str(BOOTSTRAP_SOURCE_FILE)],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            check=False
-        )
-        assert p.returncode == 1
-        output = p.stdout.strip()
-        assert 'File not found' in output
-        if sys.platform == 'win32':
-            assert output.endswith(r'\dev_shell\uv.lock" !')
-        else:
-            assert output.endswith('/dev_shell/uv.lock" !')

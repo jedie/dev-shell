@@ -1,10 +1,10 @@
 import argparse
+import subprocess
 import sys
-from pathlib import Path
 
 import cmd2
-from cli_base.cli_tools import code_style
 from cli_base.cli_tools.dev_tools import run_coverage, run_unittest_cli
+from cli_base.cli_tools.git import Git
 from cli_base.cli_tools.subprocess_utils import ToolsExecutor
 from cli_base.run_pip_audit import run_pip_audit
 from cmd2 import Cmd2ArgumentParser, with_argparser
@@ -30,18 +30,14 @@ class DevShellCommandSet(DevShellBaseCommandSet):
     """
 
     MIN_PY_MAJOR_VERSION = 3
-    MIN_PY_MINOR_VERSION = 11
+    MIN_PY_MINOR_VERSION = 12
 
     pyupgrade_argparser = Cmd2ArgumentParser()
-    pyupgrade_argparser.add_argument('--exit-zero-even-if-changed', action='store_true')
-    pyupgrade_argparser.add_argument('--keep-percent-format', action='store_true')
-    pyupgrade_argparser.add_argument('--keep-mock', action='store_true')
-    pyupgrade_argparser.add_argument('--keep-runtime-typing', action='store_true')
     pyupgrade_argparser.add_argument(
-        '--major-version', dest='major', action='store_const', const=3, default=MIN_PY_MAJOR_VERSION
+        '--major-version', dest='major', action='store_const', default=MIN_PY_MAJOR_VERSION
     )
     pyupgrade_argparser.add_argument(
-        '--minor-version', dest='minor', action='store_const', const=7, default=MIN_PY_MINOR_VERSION
+        '--minor-version', dest='minor', action='store_const', default=MIN_PY_MINOR_VERSION
     )
 
     @with_argparser(pyupgrade_argparser)
@@ -53,22 +49,24 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         print(f'Run PyUpgrade over "{base_path}" (min version: {args.major}.{args.minor})')
         args.min_version = (args.major, args.minor)
 
-        from pyupgrade._main import _fix_file
+        # uv tool run pyupgrade --py312-plus $(git ls-files -- '*.py')
 
-        total_count = 0
-        change_count = 0
+        git = Git()
+        files = [str(path) for path in git.ls_files() if path.suffix == '.py']
 
-        for file_path in base_path.glob('**/*.py'):
-            rel_path = file_path.relative_to(base_path)
-            dir_name = rel_path.parts[0]
-            if dir_name.startswith('.'):
-                continue
-
-            total_count += 1
-            changed = _fix_file(filename=file_path, args=args)
-            if changed:
-                change_count += 1
-        print(f'Out of {total_count} files, {change_count} have been updated.')
+        try:
+            verbose_check_call(
+                'uv',
+                'tool',
+                'run',
+                'pyupgrade',
+                f'--py{args.major}{args.minor}-plus',
+                *files,
+                verbose=True,
+                exit_on_error=False,
+            )
+        except subprocess.CalledProcessError:
+            return  # info already printed by verbose_check_call
 
     def do_test(self, statement: cmd2.Statement):
         """
@@ -94,9 +92,6 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         Call "poetry update" to update all dependencies in .venv
         """
         tools_executor = ToolsExecutor(cwd=self.config.base_path)
-
-        tools_executor.verbose_check_call('pip', 'install', '-U', 'pip')
-        tools_executor.verbose_check_call('pip', 'install', '-U', 'uv')
         tools_executor.verbose_check_call('uv', 'lock', '--upgrade')
 
         run_pip_audit(base_path=self.config.base_path)
@@ -104,30 +99,28 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         # Install new dependencies in current .venv:
         tools_executor.verbose_check_call('uv', 'sync')
 
-        script_name = Path(sys.argv[0]).name
-        print(bright_green(f'\n\nPlease restart "{script_name}" !\n'))
+        print(bright_green('\n\nPlease restart the shell !\n'))
         sys.exit(0)  # Stop cmd
 
     def do_fix_code_style(self, statement: cmd2.Statement):
         """
-        Fix code style by running darker
+        Fix code style by running ruff
         """
-        code_style.fix(package_root=self.config.base_path)
-
-    def do_check_code_style(self, statement: cmd2.Statement):
-        """
-        Check code style by running darker
-        """
-        code_style.check(package_root=self.config.base_path)
+        verbose_check_call(
+            'uv',
+            'tool',
+            'run',
+            'ruff',
+            'check',
+            '--fix',
+            exit_on_error=False,
+        )
 
     def do_list_venv_packages(self, statement: cmd2.Statement):
         """
         Just call "pip freeze" to list all installed venv packages
         """
-        verbose_check_call(
-            'pip', 'freeze',
-            cwd=self.config.base_path
-        )
+        verbose_check_call('uv', 'pip', 'freeze', cwd=self.config.base_path)
 
     def do_publish(self, statement: cmd2.Statement):
         """
