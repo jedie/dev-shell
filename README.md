@@ -38,34 +38,18 @@ The output on first bootstrap start looks like:
 
 ```bash
 ~/dev-shell$ ./devshell.py
-Create venv here: ~/dev-shell/.venv
-Collecting pip
-...
-Successfully installed pip-21.0.1
-Collecting poetry
-...
-Installing dependencies from lock file
 
-Package operations: 31 installs, 1 update, 0 removals
+Developer shell - dev_shell - v0.10.0
 
-...
-
-Installing the current project: dev-shell (0.0.1alpha0)
-
-
-+ .venv/bin/python .venv/bin/devshell
-
-
-Developer shell - dev_shell - v0.2.0
-
-
-Documented commands (use 'help -v' for verbose/'help <topic>' for details):
 
 dev-shell commands
-==================
-fix_code_style  linting  list_venv_packages  publish  test  update
+──────────────────
+check_code_style  fix_code_style  list_venv_packages  pyupgrade  update
+coverage          install         publish             test       version
 
-...
+Uncategorized Commands
+──────────────────────
+alias  help  history  macro  quit  set  shortcuts
 
 (dev_shell) quit
 ~/dev-shell$

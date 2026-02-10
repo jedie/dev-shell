@@ -1,12 +1,12 @@
 import os
-import re
 import shlex
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from dev_shell.utils.assertion import assert_is_dir
+from bx_py_utils.path import assert_is_dir
+
 from dev_shell.utils.colorful import (
     blue,
     bright_blue,
@@ -19,24 +19,6 @@ from dev_shell.utils.colorful import (
 
 
 DEFAULT_TIMEOUT = 5 * 60
-
-
-def argv2str(argv):
-    """
-    >>> argv2str(['foo', '--bar=123'])
-    'foo --bar=123'
-    """
-    items = []
-    for item in argv:
-        if isinstance(item, Path):
-            item = str(item)
-
-        if re.match(r'^[-0-9a-zA-Z_.=]+$', item):
-            items.append(item)
-        else:
-            items.append(shlex.quote(item))
-
-    return ' '.join(items)
 
 
 def make_absolute_path(path):
@@ -84,7 +66,7 @@ def _print_info(popenargs, *, cwd, kwargs):
 
     if len(popenargs) > 1:
         command, *args = popenargs
-        args = argv2str(args)
+        args = shlex.join(args)
     else:
         command = popenargs[0]
         args = ''

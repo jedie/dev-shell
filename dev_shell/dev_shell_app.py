@@ -32,7 +32,7 @@ def get_devshell_app_kwargs():
     return app_kwargs
 
 
-def devshell_cmdloop():
+def main():
     """
     Entry point to start the "dev-shell" cmd2 app.
     Used in: [project.scripts]
