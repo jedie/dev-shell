@@ -74,8 +74,10 @@ See also:
 
 ## History
 
-* [*dev*](https://github.com/jedie/dev-shell/compare/v0.8.0...main)
+* [*dev*](https://github.com/jedie/dev-shell/compare/v0.10.1...main)
   * TBC
+* [0.10.1 - 2026-02-10](https://github.com/jedie/dev-shell/compare/v0.10.0...v0.10.1)
+  * Bugfix colorful shortcuts
 * [0.10.0 - 2026-02-10](https://github.com/jedie/dev-shell/compare/v0.9.1...v0.10.0)
   * Modernize codebase
 * [0.9.1 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.9.0...v0.9.1)
