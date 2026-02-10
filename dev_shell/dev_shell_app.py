@@ -8,7 +8,15 @@ class DevShellApp(DevShellBaseApp):
     """
     The "dev-shell" Cmd2 App
     """
-    pass
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Just print the help table on startup if no CLI usage (no command passed as argument):
+        if not self._startup_commands:
+            self._startup_commands = [
+                'help',
+            ]
 
 
 def get_devshell_app_kwargs():
