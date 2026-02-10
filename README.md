@@ -19,20 +19,23 @@ Run Tests? Just start the script and call the "run test command".
 
 The "dev-shell" is the base to create a CLI and a shell. It also shows how to make a project bootstrap as simply as possible, e.g.:
 
+
+At least `uv` is needed. Install e.g.: via pipx:
+```bash
+apt-get install pipx
+pipx install uv
+```
+
+Clone the project and just start the CLI help commands.
+A virtual environment will be created/updated automatically.
+
 ```bash
 ~$ git clone https://github.com/jedie/dev-shell.git
 ~$ cd dev-shell
-~/dev-shell$ ./devshell.py test
+~/dev-shell$ devshell.py --help
+~/dev-shell$ devshell.py test
 ```
 
-
-## How it works
-
-First start of the Python script [./devshell.py](https://github.com/jedie/dev-shell/blob/main/devshell.py) will bootstrap:
-
-* Generate a Python virtual environment (in short: `venv`)
-* Install poetry
-* Install project dependencies and the project himself
 
 The output on first bootstrap start looks like:
 
@@ -55,43 +58,26 @@ alias  help  history  macro  quit  set  shortcuts
 ~/dev-shell$
 ```
 
-The first bootstrap start takes a few seconds. Each later startup detects the existing virtualenv and is very fast:
-
-```bash
-~/dev-shell$ ./devshell.py
-
-Developer shell - dev_shell - v0.2.0
-
-(dev_shell) help
-```
-
-Info: The `.venv` will be automatically updated via `poetry install` call if the `uv.lock` file has been changed.
-
-A call with `--update` will force to call some create/update steps, e.g.:
-
-```bash
-~/dev-shell$ ./devshell.py --update
-```
-
-You can also just delete `/.venv/` and start `devshell.py` again ;)
-
-(Using `--update` is not to be confused with the call of "update" command.)
-
 
 ## compatibility
 
 | dev-shell version | OS                      | Python version      |
 |-------------------|-------------------------|---------------------|
+| >=v0.10.0         | Linux + MacOS + Windows | 3.14, 3.13, 3.12    |
 | >=v0.7.0          | Linux + MacOS + Windows | 3.11, 3.10, 3.9     |
 | >=v0.5.0          | Linux + MacOS + Windows | 3.10, 3.9, 3.8, 3.7 |
 | >=v0.0.1          | Linux + MacOS + Windows | 3.9, 3.8, 3.7       |
 
-See also github test configuration: [.github/workflows/test.yml](https://github.com/jedie/dev-shell/blob/main/.github/workflows/test.yml)
+See also:
+* github test configuration: [.github/workflows/test.yml](https://github.com/jedie/dev-shell/blob/main/.github/workflows/test.yml)
+* Nox configuration: [noxfile.py](https://github.com/jedie/dev-shell/blob/main/noxfile.py)
 
 ## History
 
 * [*dev*](https://github.com/jedie/dev-shell/compare/v0.8.0...main)
   * TBC
+* [0.10.0 - 2026-02-10](https://github.com/jedie/dev-shell/compare/v0.9.1...v0.10.0)
+  * Modernize codebase
 * [0.9.1 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.9.0...v0.9.1)
   * Fix usage as package in external projects
 * [0.9.0 - 2025-03-11](https://github.com/jedie/dev-shell/compare/v0.8.0...v0.9.0)
