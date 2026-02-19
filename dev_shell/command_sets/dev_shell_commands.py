@@ -99,6 +99,10 @@ class DevShellCommandSet(DevShellBaseCommandSet):
         # Install new dependencies in current .venv:
         tools_executor.verbose_check_call('uv', 'sync')
 
+        if tools_executor.is_executable('pre-commit'):
+            # Update git pre-commit hooks:
+            tools_executor.verbose_check_call('pre-commit', 'autoupdate')
+
         print(bright_green('\n\nPlease restart the shell !\n'))
         sys.exit(0)  # Stop cmd
 

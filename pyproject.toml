@@ -10,7 +10,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "cmd2",  # https://github.com/python-cmd2/cmd2
-    "cli-base-utilities",  # https://github.com/jedie/cli-base-utilities
+    "cli-base-utilities>=0.28.0",  # https://github.com/jedie/cli-base-utilities
     "rich",
     # Platform-specific readline support:
     "pyreadline3; sys_platform == 'win32'",  # Windows only
@@ -25,11 +25,13 @@ dev = [
     "hatchling",  # https://github.com/pypa/hatch/tree/master/backend
     "nox",  # https://github.com/wntrblm/nox
     "coverage",  # https://github.com/nedbat/coveragepy
+    "ruff", # https://github.com/astral-sh/ruff
     "codespell",  # https://github.com/codespell-project/codespell
     "EditorConfig",  # https://github.com/editorconfig/editorconfig-core-py
     "pip-audit",  # https://github.com/pypa/pip-audit
     "mypy",  # https://github.com/python/mypy
     "twine",  # https://github.com/pypa/twine
+    "pre-commit",  # https://github.com/pre-commit/pre-commit
     "typeguard",  # https://github.com/agronholm/typeguard/
 ]
 
