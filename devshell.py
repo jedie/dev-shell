@@ -70,12 +70,18 @@ def main(argv):
     if not uv_bin:
         print_uv_error_and_exit()
 
+    if not Path(VIRTUAL_ENV).is_dir():
+        verbose_check_call(uv_bin, 'venv', VIRTUAL_ENV)
+
+        # Activate git pre-commit hooks:
+        verbose_check_call(uv_bin, 'run', '--active', '-m', 'pre_commit', 'install')
+
     # The cmd2 shell should not abort on Ctrl-C => ignore "Interrupt from keyboard" signal:
     signal.signal(signal.SIGINT, noop_signal_handler)
 
     # Call our entry point CLI:
     try:
-        verbose_check_call(uv_bin, 'run', '-m', 'dev_shell', *argv[1:])
+        verbose_check_call(uv_bin, 'run', '--active', '-m', 'dev_shell', *argv[1:])
     except subprocess.CalledProcessError as err:
         sys.exit(err.returncode)
 
